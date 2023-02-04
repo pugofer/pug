@@ -1,0 +1,39 @@
+on:
+  release:
+    types: [created]
+
+name: Handle Release
+jobs:
+  generate:
+    name: Create release-artifacts
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install mingw tools and related dependencies
+        run: sudo apt-get install -y mingw-w64 libedit-dev libedit2
+      - name: Checkout the repository
+        uses: actions/checkout@master
+      - name: Build the project
+        run: source ./.github/build
+        shell: bash 
+      - name: Upload the artifacts
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'pug/src/*.zip'
+  generate-macos:
+    name: Create macos artifacts
+    runs-on: macos-11
+    steps:
+      - name: Install dependencies
+        run: brew install libedit
+      - name: Checkout the repository
+        uses: actions/checkout@master
+      - name: Build the project
+        run: source ./.github/build-macos.sh
+        shell: bash 
+      - name: Upload files to a GitHub release
+        uses: svenstaro/upload-release-action@2.3.0
+        with:
+          file: 'pug/src/pug_macos.zip'
+          repo_token: ${{ secrets.GITHUB_TOKEN }}

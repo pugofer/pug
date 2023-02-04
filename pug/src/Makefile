@@ -24,13 +24,11 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 # as you use to build the file runtime.o (as specified by the CC macro
 # below).
 
-# Choose one of these (ATM 64-bit is not working)
-#CC		= i686-w64-mingw32-gcc-4.6
-#CC		= x86_64-w64-mingw32-gcc
-CC		= gcc
+# For windows and mac builds, refer to variables in ./.github/build-<platform>.sh
+CC		    ?= gcc
 #CFLAGS		= -DUSE_READLINE=1
-CFLAGS		=
-LDFLAGS    	= -lm
+CFLAGS		?=
+LDFLAGS    	?= -lm
 OPTFLAGS	= -O
 OPT1		=
 #OPT1		= -O1
@@ -39,7 +37,6 @@ OPT1		=
 
 gofer		: $(IOBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(IOBJECTS) -o gofer $(LDFLAGS)
-		  strip gofer
 
 gofc		: $(COBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(COBJECTS) -o gofc $(LDFLAGS)
@@ -49,7 +46,7 @@ gofc		: $(COBJECTS)
 		  $(CC) -c $(CFLAGS) $(OPTFLAGS) $<
 
 clean		:
-		  rm *.o $(TESTS)
+		  rm -f *.o $(TESTS)
 
 install		:
 		  mv gofer ..
