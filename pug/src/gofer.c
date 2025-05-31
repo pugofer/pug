@@ -1,3 +1,4 @@
+
 /*Arunachala Siva Arunachala Ramana*/
 /* --------------------------------------------------------------------------
  * gofer.c:	Copyright (c) Mark P Jones 1991-1994.   All rights reserved.
@@ -102,7 +103,7 @@ String argv[]; {
     scriptFile	  = 0;
     numScripts	  = 0;
     namesUpto	  = 1;
-    scriptName[0] = strCopy(fromEnv("PUGOFER",STD_PRELUDE));
+    scriptName[0] = strCopy(fromEnv("PUG",STD_PRELUDE));
     prompt	  = strCopy("?");
     repeatStr	  = strCopy("$$");
 
@@ -811,8 +812,8 @@ static Void local bannerContents()
   {
        "Gofer Version 2.30a",
        "Modifications for pugofer Rusi Mody",
-       "Copyright (c) Mark P Jones 1991-1994",
-       "Copyright (c) Rusi P Mody  1995-2016",
+       "Pug Version 0.2 Derived from Gofer",
+       "Copyright (c) Rusi P Mody 1995-2025,  Mark P Jones 1991-1994.",
        NULL
   };
 
