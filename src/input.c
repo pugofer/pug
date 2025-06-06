@@ -745,7 +745,7 @@ static Cell local readDecChar() {      /* read decimal character constant  */
 String unlexChar(c,quote)		/* return string representation of */
 Char c;					/* character...			   */
 Char quote; {				/* protect quote character	   */
-    static char buffer[12];
+    static char buffer[22];
 
     if (c<0)				/* deal with sign extended chars.. */
 	c += NUM_CHARS;
