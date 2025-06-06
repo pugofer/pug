@@ -14,18 +14,18 @@
 --    Any Gofer prelude file should typically include at least the following
 --    definitions:
 
-infixr 5 :
+infixr 5 ::
 infixr 3 &&
 infixr 2 ||
 
-(&&), (||)     :: Bool -> Bool -> Bool
+(&&), (||)     : Bool -> Bool -> Bool
 False && _      = False     -- (&&) and (||) names predefined in Gofer
 True  && x      = x
 False || x      = x
 True  || _      = True
 
-flip           :: (a -> b -> c) -> b -> a -> c
-flip  f x y     =  f y x
+flip           : (a -> b -> c) -> b -> a -> c
+flip. f.x.y     =  f.y.x
 
-primitive error "primError" :: String -> a
+primitive error "primError"  : String -> a
 

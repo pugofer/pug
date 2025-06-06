@@ -1,19 +1,13 @@
-This is the umbrella directory for Pugofer.
-It contains
-- the sources for the executable =pug= including install instructions
-- techreports
-- editor modes (currently emacs)
-* The Name
-- Pugofer = Platonic Universe that's GOod for Equational Reasoning :: The ideas, philosophy, methodology, habits, culture that we believe should be the foundation of good programming education
-- Pug = Platonic Universe for Geeks :: The executable that's its most standard interface.
+* gofer
+This gofer is a fork of Mark Jones original with some additions and modifications, the most visible one being the /Dijkstra dot/ for function application. See [[https://www.cs.utexas.edu/users/EWD/ewd13xx/EWD1300.PDF][Notational Conventions]] – pg 8 onwards.
 
-  More on the recent history at the blog posts : [[http://blog.languager.org/2022/03/pugofer-pug.html][Pugofer-Pug]], [[http://blog.languager.org/2022/03/a-fairy-tale-and-bridge.html][A Fairy Tale and a Bridge]]
+I used to call it /pugofer/ since I was using it to teach when at Pune University in the early 90s.
 
- Older writings at [[http://blog.languager.org/search/label/FP][on FP]] may also be of interest
-
-
-* Acknowledgements
-Mark Jones original creation of gofer is the starting point for this work and is gratefully acknowledged
+Mark Jones is gratefully acknowledged for this pioneering work.
+* Setup
+See [[file:INSTALL.org][installation/setup]]
+* Sample
+To see how source looks with these changed syntaxes, look at the standard prelude: [[file:pustd.pre][pustd.pre]].
 
 The alternate prelude [[file:pusimple.pre][pusimple]] is particularly neat for those who feel the need to grok Hindley-Milner before getting into typeclasses. With that you'll get, for example:
 #+BEGIN_SRC haskell
@@ -35,10 +29,8 @@ You can switch back to classic Haskell syntax with =:s -S=
 #+END_SRC
 * Building
 - =cd src=
-- Choose the architecture near line 25 following  [[file:src/prelude.h][prelude.h]]
-
-  Exactly one =LINUX=, =WIN32= or =NETBSD= (for MacOS) should be 1; all the rest should be 0
-- If necessary, choose C compiler -- =CC= -- in [[file:src/Makefile][Makefile]] 
+- Choose the architecture at the top of [[file:src/prelude.h][prelude.h]]
+- Choose C compiler -- =CC= -- in [[file:src/Makefile][Makefile]] 
 - =$ make= 
 There is no configure to run.\\
 Windows seems to build with mingw for 32 bit but not 64.
@@ -51,4 +43,3 @@ Also may be of interest:
 - [[http://www.the-magus.in/Publications/purgatory.pdf][Lunchtime at Purgatory]]
 
 Evidently at the end of his life Dijkstra did [[https://www.cs.utexas.edu/users/EWD/OtherDocs/To%20the%20Budget%20Council%20concerning%20Haskell.pdf][support FP]]
-
