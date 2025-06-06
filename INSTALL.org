@@ -4,54 +4,48 @@ $ sudo apt-get install gcc build-essential git emacs
 #+END_SRC
 * Clone gofer
 #+BEGIN_SRC shell
-$ git clone https://github.com/rusimody/gofer.git
+$ git clone https://github.com/pugofer/pug.git
 #+END_SRC
 * Build
 
 Above should make a directory called gofer\\
 Usually in your home but that depends on where you ran the git clone.
 
-Following I'll use the expression =/path/to/gofer/...=
+Following I'll use the expression =/path/to/pug/...=
 Please replace =path/to= by the actual path. In most cases =~= should be sufficient
 
 cd into =/path/to/gofer/src= and run
 #+BEGIN_SRC shell
 $ make
 #+END_SRC
-Currently there are/maybe warnings building gofer -- Ignore!
 
 * Check executable
 
-Above should make an executable called gofer. When you run it (at shell as:)
+Above should make an executable called pug. When you run it (at shell as:)
 #+BEGIN_SRC shell
-$ ./gofer
+$ ./pug
 #+END_SRC
-you should get an error that looks like this:
-#+BEGIN_SRC shell
-ERROR "pustd.pre": Unable to open file
+This should start the interpreter.
 
-FATAL ERROR: Unable to load prelude
-#+END_SRC
-This is good.\\
-OTOH if you get something like
-#+BEGIN_SRC C
-command gofer not found
-#+END_SRC
-then something wrong happened at earlier stage.
+Note that this is starting from the pug/src directory -- not an ideal setup.
 
-Assuming that you got the 'FATAL' error, set the path thus at shell (make sure the path below is correct!)
+To run it from anywhere you need:
+1. =pug= executable in your =PATH=
+2. =PUG= environment variable setup like so:
 #+BEGIN_SRC shell
-$ export PUGOFER=/path/to/gofer/pusimple.pre
+$ export PUG=/path/to/pug/preludes/pup.pre
 #+END_SRC
-Now gofer should run (at shell) ie
-#+BEGIN_SRC shell
-$ ./gofer
-#+END_SRC
-should start.
+
+Warning: As of now pug does not understand =~=; Use =$HOME= 
+
+The 3 standard preludes you can try are
+- =pup= :: No classes =Eq=, =Num= etc
+- =pug= :: the standard prelude
+- =cat= :: the constructor class prelude
 * Non-emacs Use
 If you dont want to use emacs, this much should be sufficient:\\
 Just have gofer running in one window, an editor of your choice in another and whenever you want to add a changed file to gofer do (within gofer)
 #+BEGIN_SRC haskell
 :l filename.gs
 #+END_SRC
-For emacs setup read the [[file:emacs/README.org][README]] in the emacs directory
+For emacs setup you will need to setup from the [[https://github.com/pugofer/emacs-pug][emacs repo]].
