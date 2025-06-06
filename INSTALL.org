@@ -12,7 +12,9 @@ Above should make a directory called =pug=\\
 Usually in your home but that depends on where you ran the git clone.
 
 Following I'll use the expression =/path/to/pug/...=\\
-Please replace =path/to= by the actual path. In most cases =~= should be sufficient
+Please replace =path/to= by the actual path.\\
+In most cases =~= should be sufficient.\\
+*Except the shell export variable* =PUG= -- see at end check executable
 
 cd into =/path/to/pug/src= and run
 #+BEGIN_SRC shell
@@ -36,7 +38,7 @@ To run it from anywhere you need:
 $ export PUG=/path/to/pug/preludes/pup.pre
 #+END_SRC
 
-Warning: As of now pug does not understand =~=; Use =$HOME= 
+Warning: As of now ~pug~ does not understand =~=; Use =$HOME= 
 
 The 3 standard preludes you can try are
 - =pup= :: No classes =Eq=, =Num= etc
