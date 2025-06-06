@@ -11,10 +11,13 @@ $ git clone https://github.com/pugofer/pug.git
 Above should make a directory called =pug=\\
 Usually in your home but that depends on where you ran the git clone.
 
-Following I'll use the expression =/path/to/pug/...=\\
-Please replace =path/to= by the actual path.\\
-In most cases =~= should be sufficient.\\
-*Except the shell export variable* =PUG= -- see at end check executable
+Following I'll use the expression =/path/to/pug/...=
+
+Please replace =path/to= by the actual path.
+
+In most cases =~= should be sufficient.
+
+*Except the shell export variable* =PUG= -- see below at end of *Check executable*
 
 cd into =/path/to/pug/src= and run
 #+BEGIN_SRC shell
@@ -29,7 +32,7 @@ $ ./pug
 #+END_SRC
 This should start the interpreter.
 
-Note that this is starting from the pug/src directory -- not an ideal setup.
+Note that this is starting from the ~pug/src~ directory -- not an ideal setup!
 
 To run it from anywhere you need:
 1. =pug= executable in your =PATH=
@@ -45,7 +48,8 @@ The 3 standard preludes you can try are
 - =pug= :: the standard prelude
 - =cat= :: the constructor class prelude
 * Non-emacs Use
-If you dont want to use emacs, this much should be sufficient:\\
+If you dont want to use emacs, this much should be sufficient:
+
 Just have ~pug~ running in one window, an editor of your choice in another and whenever you want to load a changed file to ~pug~ do (from within ~pug~)
 #+BEGIN_SRC haskell
 :l filename.gs
