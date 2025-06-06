@@ -298,7 +298,7 @@ Int first; {				/* loading everything after and	   */
 static Void local whatFiles() {		/* list files in current session   */
     int i;
     if (0) {infWhatFiles(); return;}
-    printf("\nGofer session for:");
+    printf("\nPug session for:");
     if (projectLoaded)
 	printf(" (project: %s)",currProject);
     for (i=0; i<numScripts; ++i)
@@ -810,9 +810,8 @@ static Void local bannerContents()
   char *sep;
   char *banstrs[] =
   {
-       "Gofer Version 2.30a",
-       "Modifications for pugofer Rusi Mody",
-       "Pug Version 0.2 Derived from Gofer",
+       "Pug Version 0.3 Derived from Gofer Version 2.30a",
+       "Modifications for pug Rusi Mody",
        "Copyright (c) Rusi P Mody 1995-2025,  Mark P Jones 1991-1994.",
        NULL
   };
