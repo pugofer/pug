@@ -1,0 +1,38 @@
+# Treat all text files as UTF-8 and normalize line endings according to platform
+* text=auto
+
+# Doc-ish stuff
+*.yml text diff
+*.yaml text diff
+*.md text diff
+*.markdown text diff
+*.html text diff
+*.css text diff
+*.js text diff
+*.ts text diff
+*.json text diff
+*.svg text diff
+*.xml text diff
+
+# Code-ish stuff
+*.c text diff
+*.h text diff
+*.gs text diff
+*.lgs text diff
+
+# Other text diff
+*.csv text diff
+*.ini text diff
+*.toml text diff
+*.txt text diff
+*.properties text diff
+Dockerfile text diff
+
+# Ensure shell scripts have LF endings (common best practice)
+*.sh text diff eol=lf
+
+# Binaries
+*.pdf binary
+*.jpg binary
+*.jpeg binary
+*.png binary
