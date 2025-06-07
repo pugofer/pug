@@ -44,8 +44,9 @@ $ export PUG=/path/to/pug/preludes/pup.pre
 Warning: As of now ~pug~ does not understand =~=; Use =$HOME= 
 
 The 3 standard preludes you can try are
-- =pup= :: No classes =Eq=, =Num= etc
-- =pug= :: the standard prelude
+- =pup= :: Absolutely minimum required to start
+- =pug= :: No classes =Eq=, =Num= etc
+- =standard= :: the standard prelude
 - =cat= :: the constructor class prelude
 * Non-emacs Use
 If you dont want to use emacs, this much should be sufficient:
