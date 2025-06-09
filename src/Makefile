@@ -26,8 +26,8 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 
 # Choose one of these (ATM 64-bit is not working)
 
-#CC		= x86_64-w64-mingw32-gcc
-CC		= gcc
+CC		= x86_64-w64-mingw32-gcc
+#CC		= gcc
 
 #CFLAGS		= -DUSE_READLINE=1
 CFLAGS		=
@@ -50,7 +50,7 @@ gofc		: $(COBJECTS)
 		  $(CC) -c $(CFLAGS) $(OPTFLAGS) $<
 
 clean		:
-		  rm *.o $(TESTS)
+		  rm -f *.o $(TESTS)
 
 install		:
 		  mv gofer ..

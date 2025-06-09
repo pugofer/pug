@@ -22,6 +22,7 @@
  * update the source.
  *-------------------------------------------------------------------------*/
 
+#if 0
 #define TURBOC   0      /* For IBM PC, using Turbo C 1.5		   */
 #define BCC	 0      /* For IBM PC, using Borland C++ 3.1		   */
 #define WATCOM	 0	/* For IBM PC, using WATCOM C/C++32 v9.5	   */
@@ -35,7 +36,7 @@
 #define MINIX68K 0	/* For Minix68k with gcc			UN */
 #define AMIGA    0	/* For Amiga using gcc 2.2.2			UN */
 #define HPUX     0      /* For HPUX using gcc				   */
-#define LINUX    1      /* For Linux using gcc				UN */
+#define LINUX    0      /* For Linux using gcc				UN */
 #define RISCOS   0	/* For Acorn DesktopC and RISCOS2 or 3		   */
 #define ALPHA	 0	/* For DEC Alpha with OSF/1 (32 bit ints, no gofc) */
 #define SVR4	 0	/* For SVR4 using GCC2.2			   */
@@ -45,6 +46,8 @@
 #define SGI4	 0	/* For SiliconGraphics Indigo, IRIX v*4*.0.5	UN */
 #define NETBSD	 0	/* For NetBSD-current;  Use for MacOS		   */
 #define WIN32	 0	/* rusi aug 2013 */
+#endif
+// Moving to predefined _WIN32
 
 /*---------------------------------------------------------------------------
  * To add a new machine/compiler, add a new macro line above, add the new
@@ -81,15 +84,15 @@
  *   FIXED_SUBST    to force a fixed size for the current substitution
  *-------------------------------------------------------------------------*/
 
-#define UNIX		(SUNOS  | NEXTSTEP | HPUX | NEXTGCC | LINUX | AMIGA | \
+#define UNIX		(SUNOS  | NEXTSTEP | HPUX | NEXTGCC | __linux__ | AMIGA | \
 			 MINIX68K | ALPHA | OS2 | SVR4 | ULTRIX | AIX | MIPS |\
 			 SGI4 | NETBSD)
 #define SMALL_GOFER	(TURBOC | BCC)
 #define REGULAR_GOFER	(RISCOS | DJGPP | ZTC | ATARI)
-#define LARGE_GOFER	(UNIX   | WATCOM | WIN32)
+#define LARGE_GOFER	(UNIX   | WATCOM | _WIN32)
 #define JMPBUF_ARRAY	(UNIX   | DJGPP | RISCOS | ZTC | ATARI)
-#define DOS_IO		(TURBOC | BCC | WIN32 | DJGPP | ZTC | WATCOM | ATARI)
-#define TERMIO_IO	(LINUX  | HPUX | OS2 | SVR4 | SGI4)
+#define DOS_IO		(TURBOC | BCC | _WIN32 | DJGPP | ZTC | WATCOM | ATARI)
+#define TERMIO_IO	(__linux__  | HPUX | OS2 | SVR4 | SGI4)
 #define SGTTY_IO	(SUNOS  | NEXTSTEP | NEXTGCC | AMIGA | MINIX68K | \
 			 ALPHA  | ULTRIX | AIX | MIPS)
 #define TERMIOS_IO      (NETBSD)
@@ -179,7 +182,7 @@ extern  int  kbhit	Args((void));
 #define sigResume	return 1
 #endif
 
-#if WIN32
+#if _WIN32
 #define far
 #include <signal.h>
 #endif
@@ -208,7 +211,7 @@ extern  int  kbhit	Args((void));
 #define	farCalloc(n,s)	(Void *)valloc(((unsigned)n)*((unsigned)s))
 #endif
 
-#if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | WIN32)
+#if     (HPUX | DJGPP | ZTC | __linux__ | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | _WIN32)
 #include <stdlib.h>
 #include <string.h>
 #define  far
@@ -263,7 +266,7 @@ extern   int namecmp    Args((char *, char *));
 #define MainDone
 #endif
 
-#if (UNIX | DJGPP | RISCOS | ZTC | WATCOM | ATARI | WIN32)
+#if (UNIX | DJGPP | RISCOS | ZTC | WATCOM | ATARI | _WIN32)
 #define ctrlbrk(bh)	   signal(SIGINT,bh)
 #endif
 
@@ -273,6 +276,8 @@ extern   int namecmp    Args((char *, char *));
 
 #if UNIX
 #include <unistd.h>
+#elif _WIN32
+#include <io.h>
 #endif
 /*---------------------------------------------------------------------------
  * General settings:
@@ -354,7 +359,7 @@ extern char	*strcpy	   Args((String,String));
 extern char     *strcat	   Args((String,String));
 #endif
 #endif
-#if !LINUX
+#if !__linux__
 extern char	*getenv	   Args((char *));
 extern int      system	   Args((const char *));
 extern double   atof	   Args((char *));
