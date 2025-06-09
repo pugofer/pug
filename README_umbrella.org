@@ -1,8 +1,8 @@
-This is the umbrella directory for Pugofer.
-It contains
-- the sources for the executable =pug= including install instructions
-- techreports
-- editor modes (currently emacs)
+This is the README for the [[https://github.com/pugofer/][Pugofer project]] which contains the interpreter =pug=.
+It contains:
+- The sources for the executable =pug= including install instructions
+- Techreports
+- editor modes (currently emacs, vscode)
 * The Name
 - Pugofer = Platonic Universe that's GOod for Equational Reasoning :: The ideas, philosophy, methodology, habits, culture that we believe should be the foundation of good programming education
 - Pug = Platonic Universe for Geeks :: The executable that's its most standard interface.
@@ -15,7 +15,7 @@ It contains
 * Acknowledgements
 Mark Jones original creation of gofer is the starting point for this work and is gratefully acknowledged
 
-The alternate prelude [[file:pusimple.pre][pusimple]] is particularly neat for those who feel the need to grok Hindley-Milner before getting into typeclasses. With that you'll get, for example:
+The prelude [[file:./langlevels/pup.pre][pug]] is particularly neat for those who feel the need to grok Hindley-Milner before getting into typeclasses. With that you'll get, for example:
 #+BEGIN_SRC haskell
 ? :t (+)
 (+) : Int -> Int -> Int
