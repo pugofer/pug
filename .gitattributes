@@ -39,3 +39,4 @@ Dockerfile text diff
 
 # Force *.gs files to be classified as Haskell on github
 *.gs linguist-language=Haskell
+*.lgs linguist-language=Haskell
