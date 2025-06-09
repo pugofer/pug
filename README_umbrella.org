@@ -37,11 +37,11 @@ You can switch back to classic Haskell syntax with =:s -S=
 - =cd src=
 - Choose the architecture near line 25 following  [[file:src/prelude.h][prelude.h]]
 
-  Exactly one =LINUX=, =WIN32= or =NETBSD= (for MacOS) should be 1; all the rest should be 0
+  Exactly one =LINUX=, =WIN32= or =NETBSD= (for MacOS) should be =1=; all the rest should be =0=
 - If necessary, choose C compiler -- =CC= -- in [[file:src/Makefile][Makefile]] 
 - =$ make= 
 There is no configure to run.\\
-Windows seems to build with mingw for 32 bit but not 64.
+Windows seems to build with mingw for 32 bit but not 64. (@@Stale comment?@@)
 * Literature
 Justifications for these changes are explained in [[http://www.the-magus.in/Publications/notation.pdf][Notes on Notation]]
 
