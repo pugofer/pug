@@ -37,7 +37,7 @@ Dockerfile text diff
 *.jpeg binary
 *.png binary
 
-# Force .gs, .lgs, .pre files to be classified as Haskell on github
-*.gs  linguist-language=Haskell -linguist-generated -linguist-vendored
-*.lgs linguist-language=Haskell -linguist-generated -linguist-vendored
-*.pre linguist-language=Haskell -linguist-generated -linguist-vendored
+# Force *.gs, *.lgs files to be classified as Haskell on github
+q*.gs linguist-language=Haskell
+*.lgs linguist-language=Haskell
+
