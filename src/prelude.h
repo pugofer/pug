@@ -22,24 +22,24 @@
  * update the source.
  *-------------------------------------------------------------------------*/
 
-#define TURBOC   0      /* For IBM PC, using Turbo C 1.5		   */
-#define BCC	 0      /* For IBM PC, using Borland C++ 3.1		   */
+#define TURBOC   0	/* For IBM PC, using Turbo C 1.5		   */
+#define BCC	 0	/* For IBM PC, using Borland C++ 3.1		   */
 #define WATCOM	 0	/* For IBM PC, using WATCOM C/C++32 v9.5	   */
 #define ZTC      0	/* For IBM PC (>= 386) Zortech C++ v3.0 (-mx)	   */
 #define DJGPP    0	/* For DJGPP version 1.09 (gcc2.2.2) and DOS 5.0   */
 #define OS2      0	/* For IBM OS/2 2.0 using EMX GCC		   */
-#define SUNOS    0      /* For Sun 3/Sun 4 running SunOs 4.x		   */
+#define SUNOS    0	/* For Sun 3/Sun 4 running SunOs 4.x		   */
 #define MIPS	 0	/* For MIPS RC6280/Sony machine NWS-3870	UN */
-#define NEXTSTEP 0      /* For NeXTstep 3.0 using NeXT cc		   */
+#define NEXTSTEP 0	/* For NeXTstep 3.0 using NeXT cc		   */
 #define NEXTGCC  0	/* For NeXTstep with gcc 2.x, doesn't work w/ NS3.2*/
 #define MINIX68K 0	/* For Minix68k with gcc			UN */
 #define AMIGA    0	/* For Amiga using gcc 2.2.2			UN */
-#define HPUX     0      /* For HPUX using gcc				   */
-#define LINUX    1      /* For Linux using gcc				UN */
+#define HPUX     0	/* For HPUX using gcc				   */
+#define LINUX    0	/* For Linux using gcc				UN */
 #define RISCOS   0	/* For Acorn DesktopC and RISCOS2 or 3		   */
 #define ALPHA	 0	/* For DEC Alpha with OSF/1 (32 bit ints, no gofc) */
 #define SVR4	 0	/* For SVR4 using GCC2.2			   */
-#define ULTRIX   0      /* For DEC Ultrix 4.x using GCC2.3.3		   */
+#define ULTRIX   0	/* For DEC Ultrix 4.x using GCC2.3.3		   */
 #define AIX	 0	/* For IBM AIX on RS/6000 using GCC		   */
 #define ATARI	 0	/* For Atari ST/STE/TT/Falcon w/ Lattice C 5.52 UN */
 #define SGI4	 0	/* For SiliconGraphics Indigo, IRIX v*4*.0.5	UN */
