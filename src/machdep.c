@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #endif
-#if (TURBOC | BCC | WIN32)
+#if (TURBOC | BCC | _WIN32)
 #include <dos.h>
 #include <conio.h>
 #include <io.h>
@@ -252,9 +252,13 @@ Void gcCStack() {			/* Garbage collect elements off    */
 #if SMALL_GOFER
     if (((long)(ptr) - (long)(CStackBase))&1)
 	fatal("gcCStack");
+#elif _WIN32
+    if (((uintptr_t)(ptr) - (uintptr_t)(CStackBase))&3)
+	fatal("gcCStack");
 #else 
     if (((long)(ptr) - (long)(CStackBase))&3)
 	fatal("gcCStack");
+    // Should be merged with previous #elif and the long use removed
 #endif
 
 #define StackGrowsDown	while (ptr<=CStackBase) markWithoutMove(*ptr++)

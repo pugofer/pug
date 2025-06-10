@@ -35,7 +35,7 @@
 #define MINIX68K 0	/* For Minix68k with gcc			UN */
 #define AMIGA    0	/* For Amiga using gcc 2.2.2			UN */
 #define HPUX     0	/* For HPUX using gcc				   */
-#define LINUX    1	/* For Linux using gcc				UN */
+// #define LINUX    1	/* For Linux using gcc				UN */
 #define RISCOS   0	/* For Acorn DesktopC and RISCOS2 or 3		   */
 #define ALPHA	 0	/* For DEC Alpha with OSF/1 (32 bit ints, no gofc) */
 #define SVR4	 0	/* For SVR4 using GCC2.2			   */
@@ -44,7 +44,17 @@
 #define ATARI	 0	/* For Atari ST/STE/TT/Falcon w/ Lattice C 5.52 UN */
 #define SGI4	 0	/* For SiliconGraphics Indigo, IRIX v*4*.0.5	UN */
 #define NETBSD	 0	/* For NetBSD-current;  Use for MacOS		   */
-#define WIN32	 0	/* rusi aug 2013 */
+// #define WIN32	 0	/* rusi aug 2013 */
+
+// 10 June 2025
+#if defined(__linux__)
+#define LINUX 1
+#endif
+
+// Below commented out can go; we're using _WIN32 only
+/* #if defined(_WIN32) */
+/* #define WIN32 1 */
+/* #endif */
 
 /*---------------------------------------------------------------------------
  * To add a new machine/compiler, add a new macro line above, add the new
@@ -86,9 +96,9 @@
 			 SGI4 | NETBSD)
 #define SMALL_GOFER	(TURBOC | BCC)
 #define REGULAR_GOFER	(RISCOS | DJGPP | ZTC | ATARI)
-#define LARGE_GOFER	(UNIX   | WATCOM | WIN32)
+#define LARGE_GOFER	(UNIX   | WATCOM | _WIN32)
 #define JMPBUF_ARRAY	(UNIX   | DJGPP | RISCOS | ZTC | ATARI)
-#define DOS_IO		(TURBOC | BCC | WIN32 | DJGPP | ZTC | WATCOM | ATARI)
+#define DOS_IO		(TURBOC | BCC | _WIN32 | DJGPP | ZTC | WATCOM | ATARI)
 #define TERMIO_IO	(LINUX  | HPUX | OS2 | SVR4 | SGI4)
 #define SGTTY_IO	(SUNOS  | NEXTSTEP | NEXTGCC | AMIGA | MINIX68K | \
 			 ALPHA  | ULTRIX | AIX | MIPS)
@@ -179,7 +189,7 @@ extern  int  kbhit	Args((void));
 #define sigResume	return 1
 #endif
 
-#if WIN32
+#if _WIN32
 #define far
 #endif
 
@@ -207,7 +217,7 @@ extern  int  kbhit	Args((void));
 #define	farCalloc(n,s)	(Void *)valloc(((unsigned)n)*((unsigned)s))
 #endif
 
-#if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | WIN32)
+#if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | _WIN32)
 #include <stdlib.h>
 #define  far
 #endif
@@ -261,13 +271,13 @@ extern   int namecmp    Args((char *, char *));
 #define MainDone
 #endif
 
-#if (UNIX | DJGPP | RISCOS | ZTC | WATCOM | ATARI | WIN32)
+#if (UNIX | DJGPP | RISCOS | ZTC | WATCOM | ATARI | _WIN32)
 #define ctrlbrk(bh)	   signal(SIGINT,bh)
 #endif
 
 /* 12 March 2022
  * For warning undeclared function access
- * Probably needs windows.h on WIN32 */
+ * Probably needs windows.h on _WIN32 */
 
 #if UNIX
 #include <unistd.h>
@@ -397,13 +407,20 @@ extern Void     fatal	   Args((String));
 #define DEF_EDITLINE	   "vi +%d %s"		/* if no default editor rqd*/
 
 /*-------------------------------------------------------------------------*/
-// For all
+
+// Below commented out can go. Used to be there at some interim point
+/* #if _WIN32 */
+/* #include <signal.h> */
+/* #endif */
+
+/* #if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | _WIN32) */
+/* #include <string.h> */
+/* #endif */
+
+
+// Works all modern systems
 #include <sys/stat.h>
-
-#if WIN32
-#include <signal.h>
-#endif
-
-#if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | WIN32)
+#include <stdint.h>
 #include <string.h>
-#endif
+#include <signal.h>
+
