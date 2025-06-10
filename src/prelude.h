@@ -35,7 +35,7 @@
 #define MINIX68K 0	/* For Minix68k with gcc			UN */
 #define AMIGA    0	/* For Amiga using gcc 2.2.2			UN */
 #define HPUX     0	/* For HPUX using gcc				   */
-#define LINUX    0	/* For Linux using gcc				UN */
+#define LINUX    1	/* For Linux using gcc				UN */
 #define RISCOS   0	/* For Acorn DesktopC and RISCOS2 or 3		   */
 #define ALPHA	 0	/* For DEC Alpha with OSF/1 (32 bit ints, no gofc) */
 #define SVR4	 0	/* For SVR4 using GCC2.2			   */
@@ -181,7 +181,6 @@ extern  int  kbhit	Args((void));
 
 #if WIN32
 #define far
-#include <signal.h>
 #endif
 
 #if     SUNOS
@@ -210,7 +209,6 @@ extern  int  kbhit	Args((void));
 
 #if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | WIN32)
 #include <stdlib.h>
-#include <string.h>
 #define  far
 #endif
 
@@ -399,3 +397,13 @@ extern Void     fatal	   Args((String));
 #define DEF_EDITLINE	   "vi +%d %s"		/* if no default editor rqd*/
 
 /*-------------------------------------------------------------------------*/
+// For all
+#include <sys/stat.h>
+
+#if WIN32
+#include <signal.h>
+#endif
+
+#if     (HPUX | DJGPP | ZTC | LINUX | ALPHA | OS2 | SVR4 | AIX | SGI4 | NETBSD | WIN32)
+#include <string.h>
+#endif

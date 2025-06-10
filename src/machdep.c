@@ -12,7 +12,6 @@
 #include <sys/ioctl.h>
 #include <fcntl.h>
 #include <sys/types.h>
-#include <sys/stat.h>
 #endif
 #if (TURBOC | BCC | WIN32)
 #include <dos.h>
@@ -20,7 +19,6 @@
 #include <io.h>
 #include <stdlib.h>
 #include <mem.h>
-#include <sys/stat.h>
 #include <time.h>
 #endif
 
