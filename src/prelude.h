@@ -418,7 +418,7 @@ extern Void     fatal	   Args((String));
 /* #endif */
 
 
-// Works all modern systems
+// Works all modern systems -- I believe!
 #include <sys/stat.h>
 #include <stdint.h>
 #include <string.h>
