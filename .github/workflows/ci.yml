@@ -1,0 +1,36 @@
+# This name will appear in the "Actions" tab of your GitHub repository.
+name: Pug CI
+
+# This workflow runs on every push to any branch.
+on: [push]
+
+jobs:
+  build-and-test:
+    # Use the latest version of Ubuntu as the operating system for our runner.
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository's code
+      # This downloads your code onto the runner.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install Python and pexpect
+      # We need these to run our test suite.
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install Python dependencies
+        run: pip install pexpect
+
+      # Step 3: Build the pug interpreter
+      # This runs the 'make' command inside the 'src' directory.
+      - name: Build pug interpreter
+        run: make -C src
+
+      # Step 4: Run the tests
+      # This executes the Python unittest framework on our test script.
+      # The -v flag enables verbose output.
+      - name: Run interpreter tests
+        run: python3 -m unittest discover -v
