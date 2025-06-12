@@ -1922,7 +1922,7 @@ String endTab; {
 static Void local finishTable(fp)
 FILE *fp; {
     if (tableCol>0)
-	fprintf(fp,tableEndTab);
+	fprintf(fp, "%s", tableEndTab);
 }
 
 static Void local tableItem(fp,s)
@@ -1931,7 +1931,7 @@ String s; {
     int n = strlen(s);
 
     if (tableItems++ == 0) {
-	fprintf(fp,tableStart);
+      fprintf(fp, "%s", tableStart);
 	tableCol = strlen(tableStart);
     }
     else {
@@ -2076,7 +2076,7 @@ Type   ty; {
 	fprintf(fp,"Void));\n");
     else {
         for (ts=argTypes; nonNull(ts); ts=tl(ts)) {
-	    fprintf(fp,showExtType(hd(ts)));
+	    fprintf(fp, "%s", showExtType(hd(ts)));
 	    if (nonNull(tl(ts)))
 		fprintf(fp,",");
 	}
