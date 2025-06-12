@@ -41,11 +41,15 @@ def run_test_from_file(test_case: unittest.TestCase, process: pexpect.spawn, fil
                 with test_case.subTest(command=command, expected=expected_output):
                     process.sendline(command)
                     # Match against the expected output or the next prompt
-                    index = process.expect([expected_output, PUG_PROMPT])
+                    try:
+                        index = process.expect_exact([expected_output, PUG_PROMPT], timeout=0.01)
+                        test_case.assertEqual(index, 0,
+                                              f"Command '{command}' did not produce expected output '{expected_output}'. "
+                                              f"Got: '{process.before.strip()}'")
+                    except pexpect.exceptions.TIMEOUT:
+                        # Fail with a concise error message
+                        test_case.fail(f"Failed") # f"Command '{command}' timed out. Output: '{process.before.strip()}'. Expected: '{expected_output}'.")# Match against the expected output or the next prompt
                     
-                    test_case.assertEqual(index, 0,
-                                     f"Command '{command}' did not produce expected output '{expected_output}'. "
-                                     f"Got: '{process.before.strip()}'")
                     
                     # Ensure we see the next prompt before continuing
                     process.expect(PUG_PROMPT)
@@ -115,7 +119,7 @@ def generate_tests():
 
             # Create a valid Python method name from the filename
             # e.g., "test/arithmetic_test.txt" -> "test_from_file_arithmetic_test_txt"
-            test_name = "test_from_file_" + re.sub(r'[^a-zA-Z0-9]', '_', test_file_path)
+            test_name = "test_from_file_" + re.sub(r'[^a-zA-Z0-9]', '_', os.path.basename(test_file_path))
             
             # Create the actual test method function
             test_method = create_test_method(test_file_path)

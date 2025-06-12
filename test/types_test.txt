@@ -1,5 +1,5 @@
 ? :type "a string"
-"a string" : [Char]
+"a string" : String
 ? :type 99
 99 : Int
 ? :type (1,2)

@@ -1,1 +1,2 @@
 test/arithmetic_test.txt
+test/types_test.txt
