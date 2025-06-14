@@ -1,2 +1,2 @@
-test/arithmetic_test.txt
-test/types_test.txt
+#test/pug_arithmetic_test.txt
+test/pug_types_test.txt

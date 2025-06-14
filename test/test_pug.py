@@ -48,7 +48,7 @@ def run_test_from_file(test_case: unittest.TestCase, process: pexpect.spawn, fil
                                               f"Got: '{process.before.strip()}'")
                     except pexpect.exceptions.TIMEOUT:
                         # Fail with a concise error message
-                        test_case.fail(f"Failed") # f"Command '{command}' timed out. Output: '{process.before.strip()}'. Expected: '{expected_output}'.")# Match against the expected output or the next prompt
+                        test_case.fail(f"Command '{command}' timed out. Output: '{process.before.strip()}'. Expected: '{expected_output}'.")# Match against the expected output or the next prompt
                     
                     
                     # Ensure we see the next prompt before continuing
