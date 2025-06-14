@@ -1,2 +1,3 @@
-#test/pug_arithmetic_test.txt
+test/pug_arithmetic_test.txt
 test/pug_types_test.txt
+test/pup_types_test.txt

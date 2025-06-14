@@ -66,6 +66,7 @@ class TestPugInterpreter(unittest.TestCase):
     Test methods for data files are generated dynamically.
     """
     process = None
+    current_prelude = None  # Stores the prelude for the current test
 
     def setUp(self):
         """Sets up a new pug interpreter process before each test method."""
@@ -77,7 +78,15 @@ class TestPugInterpreter(unittest.TestCase):
             self.fail(f"Pug executable not found at {pug_executable}. "
                       f"Please build it by running 'make' in the 'src' directory.")
 
-        self.process = pexpect.spawn(pug_executable, encoding='utf-8', cwd=src_dir)
+        # Get the current test method name and check if it has a prelude attribute
+        test_method_name = self._testMethodName
+        test_method = getattr(self, test_method_name)
+        prelude = getattr(test_method, 'prelude', 'pug')  # default to 'pug'
+        
+        # Set up environment with prelude file
+        env = {'PUG': f'../langlevels/{prelude}.pre'}
+
+        self.process = pexpect.spawn(pug_executable, encoding='utf-8', cwd=src_dir, env=env)
         self.process.expect(PUG_PROMPT)
 
     def tearDown(self):
@@ -98,13 +107,15 @@ def generate_tests():
     Reads the manifest file and dynamically creates a test method for each
     entry, attaching it to the TestPugInterpreter class.
     """
-    def create_test_method(filename):
+    def create_test_method(filename, prelude):
         """
         This is a 'function factory'. It creates and returns a new function
-        that will serve as our test method. This closure captures the filename.
+        that will serve as our test method. This closure captures the filename and prelude.
         """
         def test_template(self):
             run_test_from_file(self, self.process, filename)
+        # Set the prelude as an attribute on the test method
+        test_template.prelude = prelude
         return test_template
 
     print("MANIFEST FILE:", MANIFEST_FILE)
@@ -117,12 +128,24 @@ def generate_tests():
             if not test_file_path or test_file_path.startswith('#'):
                 continue
 
+            # Extract prelude from filename
+            basename = os.path.basename(test_file_path)
+            prelude_candidate = basename.split('_')[0]
+            
+            # Check if it matches known preludes, otherwise default to 'pug'
+            if prelude_candidate in ['pup', 'pug', 'kit']:
+                prelude = prelude_candidate
+            else:
+                prelude = 'pug'  # default
+            
+            print(f"Test file: {test_file_path} -> prelude: {prelude}")
+
             # Create a valid Python method name from the filename
             # e.g., "test/arithmetic_test.txt" -> "test_from_file_arithmetic_test_txt"
             test_name = "test_from_file_" + re.sub(r'[^a-zA-Z0-9]', '_', os.path.basename(test_file_path))
             
             # Create the actual test method function
-            test_method = create_test_method(test_file_path)
+            test_method = create_test_method(test_file_path, prelude)
             
             # Attach the new method to the TestPugInterpreter class
             setattr(TestPugInterpreter, test_name, test_method)
