@@ -12,9 +12,8 @@
 *.a
 
 # executables
-gofer
-gofc
 pug
-gofer.exe
-gofc.exe
 pug.exe
+pugc
+pugc.exe
+
