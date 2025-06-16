@@ -4,5 +4,5 @@
 99 : Int
 ? :type (1,2)
 (1,2) : (Int,Int)
-? :type map.(+1)
-ERROR: Undefined variable "map"
+#? :type map.(+1)
+#ERROR: Undefined variable "map"
