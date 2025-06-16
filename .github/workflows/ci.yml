@@ -4,9 +4,10 @@ name: Pug CI
 # This workflow runs on pushes to main branches and PRs to devel branch.
 on:
   push:
-    branches: [ main, master ]
+    branches: [ main ]
   pull_request:
     branches: [ devel ]
+  workflow_dispatch:   # Allows manual triggering
 
 jobs:
   build-and-test:
