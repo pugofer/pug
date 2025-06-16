@@ -49,6 +49,12 @@ gofc		: $(COBJECTS)
 test     : pug
 		   cd .. && python3 -m unittest discover -v
 
+test-reports : pug
+		   cd .. && python3 run_tests_with_reports.py --verbose --timeout 180
+
+test-ci : pug
+		   cd .. && python3 run_tests_with_reports.py --verbose --xml-output test-reports --timeout 180
+
 .c.o		:
 		  $(CC) -c $(CFLAGS) $(OPTFLAGS) $<
 
