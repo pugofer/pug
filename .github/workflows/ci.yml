@@ -17,7 +17,7 @@ jobs:
         os: [ubuntu-latest]  # Disabling windows-latest for now
         include:
           - os: ubuntu-latest
-          #   shell: bash
+            shell: bash
           # - os: windows-latest
           #   shell: msys2 {0}
 
