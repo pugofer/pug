@@ -46,6 +46,9 @@ gofc		: $(COBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(COBJECTS) -o gofc $(LDFLAGS)
 		  strip gofc
 
+test     : pug
+		   cd .. && python3 -m unittest discover -v
+
 .c.o		:
 		  $(CC) -c $(CFLAGS) $(OPTFLAGS) $<
 
