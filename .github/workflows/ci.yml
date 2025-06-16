@@ -1,36 +1,69 @@
 # This name will appear in the "Actions" tab of your GitHub repository.
 name: Pug CI
 
-# This workflow runs on every push to any branch.
-on: [push]
+# This workflow runs on pushes to main branches and PRs to devel branch.
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ devel ]
 
 jobs:
   build-and-test:
-    # Use the latest version of Ubuntu as the operating system for our runner.
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+        include:
+          - os: ubuntu-latest
+            shell: bash
+          - os: windows-latest
+            shell: msys2 {0}
+
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: ${{ matrix.shell }}
 
     steps:
       # Step 1: Check out the repository's code
-      # This downloads your code onto the runner.
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install Python and pexpect
-      # We need these to run our test suite.
-      - name: Set up Python
+      # Step 2: Set up MSYS2 on Windows
+      - name: Set up MSYS2 (Windows)
+        if: matrix.os == 'windows-latest'
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-make
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-python-pip
+            bison
+            make
+
+      # Step 3: Set up Python on Ubuntu
+      - name: Set up Python (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
-      - name: Install Python dependencies
+
+      # Step 4: Install Python dependencies
+      - name: Install Python dependencies (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
         run: pip install pexpect
 
-      # Step 3: Build the pug interpreter
-      # This runs the 'make' command inside the 'src' directory.
+      - name: Install Python dependencies (Windows)
+        if: matrix.os == 'windows-latest'
+        run: pip install wexpect
+
+      # Step 5: Build the pug interpreter
       - name: Build pug interpreter
         run: make -C src
 
-      # Step 4: Run the tests
-      # This executes the Python unittest framework on our test script.
-      # The -v flag enables verbose output.
+      # Step 6: Run the tests
       - name: Run interpreter tests
-        run: python3 -m unittest discover -v
+        run: make -C src test
