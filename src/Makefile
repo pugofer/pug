@@ -24,10 +24,7 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 # as you use to build the file runtime.o (as specified by the CC macro
 # below).
 
-# Choose one of these (ATM 64-bit is not working)
-
-#CC		= x86_64-w64-mingw32-gcc
-CC		= gcc
+CC		?= gcc
 
 #CFLAGS		= -DUSE_READLINE=1
 CFLAGS		=
