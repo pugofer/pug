@@ -31,21 +31,6 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Set up MSYS2 on Windows
-      - name: Set up MSYS2 (Windows)
-        if: matrix.os == 'windows-latest'
-        uses: msys2/setup-msys2@v2
-        with:
-          msystem: UCRT64
-          update: true
-          install: >-
-            mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-make
-            mingw-w64-ucrt-x86_64-python
-            mingw-w64-ucrt-x86_64-python-pip
-            bison
-            make
-
       # Step 3: Set up Python on Ubuntu
       - name: Set up Python (Ubuntu)
         if: matrix.os == 'ubuntu-latest'
