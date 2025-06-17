@@ -37,7 +37,7 @@ OPT1		=
 
 pug		: $(IOBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(IOBJECTS) -o pug $(LDFLAGS)
-		  strip pug
+#		  strip pug
 
 gofc		: $(COBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(COBJECTS) -o gofc $(LDFLAGS)
