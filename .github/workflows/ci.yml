@@ -113,9 +113,9 @@ jobs:
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
         run: |
-          cd src
+          Set-Location src
           python ../run_tests_with_reports.py --verbose --xml-output ../test-reports --timeout 180
-        shell: cmd
+        shell: pwsh
 
       # Step 6: Upload test results to GitHub
       - name: Publish Test Results
