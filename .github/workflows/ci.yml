@@ -75,14 +75,12 @@ jobs:
       - name: Cross-compile pug.exe for Windows
         run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
         
-      # Step 4: Upload Windows binary and langlevels as artifacts
+      # Step 4: Upload Windows binary as artifact
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pug-windows-artifacts
-          path: |
-            src/pug.exe
-            langlevels/
+          path: src/pug.exe
           retention-days: 30
 
   test-windows:
@@ -110,7 +108,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: pug-windows-artifacts
-          path: .
+          path: src/
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
