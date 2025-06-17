@@ -65,11 +65,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Install MinGW-w64 for cross-compilation
-      - name: Install MinGW-w64 UCRT
+      # Step 2: Install minimal MinGW-w64 packages for cross-compilation
+      - name: Install minimal MinGW-w64 packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y mingw-w64
+          sudo apt-get install -y \
+            gcc-mingw-w64-x86-64 \
+            binutils-mingw-w64-x86-64 \
+            mingw-w64-common \
+            bison \
 
       # Step 3: Cross-compile pug.exe for Windows
       - name: Cross-compile pug.exe for Windows
