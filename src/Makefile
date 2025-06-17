@@ -27,7 +27,7 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 CC		?= gcc
 
 #CFLAGS		= -DUSE_READLINE=1
-CFLAGS		=
+CFLAGS		?=
 LDFLAGS    	= -lm
 OPTFLAGS	= -O
 OPT1		=

@@ -77,7 +77,7 @@ jobs:
 
       # Step 4: Build the pug interpreter
       - name: Build pug interpreter
-        run: make -C src
+        run: make CFLAGS=-Wno-deprecated-non-prototype -Wno-parentheses -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
