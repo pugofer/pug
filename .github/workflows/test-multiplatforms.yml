@@ -1,12 +1,12 @@
 # This name will appear in the "Actions" tab of your GitHub repository.
-name: Pug CI
+name: Pug Tests on all platforms
 
 # This workflow runs on pushes to main branches and PRs to devel branch.
 on:
   push:
-    branches: [ main, tests ]
+    branches: [ main ]
   pull_request:
-    branches: [ devel ]
+    branches: [ main ]
   workflow_dispatch:   # Allows manual triggering
 
 jobs:
