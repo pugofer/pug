@@ -2,15 +2,18 @@ import unittest
 import sys
 import os
 import re
+from typing import Callable, Union, Dict, Any
 
 # Platform-specific imports for pexpect functionality
 if sys.platform == "win32":
     import wexpect as pexpect
     # wexpect uses the same exception names directly in the module
     pexpect_exceptions = pexpect
+    PexpectSpawn = pexpect.spawn
 else:
     import pexpect
     import pexpect.exceptions as pexpect_exceptions
+    PexpectSpawn = pexpect.spawn
 
 # --- Configuration ---
 PUG_PROMPT = r"\? " # The prompt is a literal '?' followed by a space.
@@ -18,7 +21,7 @@ MANIFEST_FILE = os.path.join(os.path.dirname(__file__), 'test_manifest.txt')
 
 # --- Generic Test Runner Function ---
 
-def run_test_from_file(test_case: unittest.TestCase, process: pexpect.spawn, filename: str):
+def run_test_from_file(test_case: unittest.TestCase, process: Any, filename: str):
     """
     A generic, data-driven test runner that reads a file of commands and expected outputs.
 
@@ -52,12 +55,14 @@ def run_test_from_file(test_case: unittest.TestCase, process: pexpect.spawn, fil
                     # Match against the expected output or the next prompt
                     try:
                         index = process.expect_exact([expected_output, PUG_PROMPT], timeout=1)
+                        before_output = str(process.before).strip() if process.before else ""
                         test_case.assertEqual(index, 0,
                                               f"Command '{command}' did not produce expected output '{expected_output}'. "
-                                              f"Got: '{process.before.strip()}'")
+                                              f"Got: '{before_output}'")
                     except pexpect_exceptions.TIMEOUT:
                         # Fail with a concise error message
-                        test_case.fail(f"Command '{command}' timed out. Output: '{process.before.strip()}'. Expected: '{expected_output}'.")
+                        before_output = str(process.before).strip() if process.before else ""
+                        test_case.fail(f"Command '{command}' timed out. Output: '{before_output}'. Expected: '{expected_output}'.")
 
 
                     # Ensure we see the next prompt before continuing
@@ -74,7 +79,7 @@ class TestPugInterpreter(unittest.TestCase):
     Test suite for the Pug interpreter using pexpect.
     Test methods for data files are generated dynamically.
     """
-    process = None
+    process: Union[Any, None] = None
     current_langlevel = None  # Stores the langlevel for the current test
 
     def setUp(self):
@@ -109,9 +114,9 @@ class TestPugInterpreter(unittest.TestCase):
         if not os.path.exists(langlevel_file):
             self.fail(f"Language level file not found: {langlevel_file}")
 
-        env = {'PUG': langlevel_file}
+        env: Dict[str, str] = {'PUG': langlevel_file}
 
-        self.process = pexpect.spawn(pug_executable, encoding='utf-8', cwd=src_dir, env=env)
+        self.process = pexpect.spawn(pug_executable, encoding='utf-8', cwd=src_dir, env=env)  # type: ignore
         self.process.expect(PUG_PROMPT)
 
     def tearDown(self):
@@ -121,9 +126,10 @@ class TestPugInterpreter(unittest.TestCase):
 
     def test_01_startup_and_exit(self):
         """Tests if the interpreter starts up and exits cleanly."""
-        self.process.sendline(":q")
-        self.process.expect(pexpect.EOF)
-        self.assertFalse(self.process.isalive(), "Process did not terminate after ':q' command.")
+        if self.process:
+            self.process.sendline(":q")
+            self.process.expect(pexpect.EOF)
+            self.assertFalse(self.process.isalive(), "Process did not terminate after ':q' command.")
 
 # --- Dynamic Test Generation Logic ---
 
@@ -132,15 +138,18 @@ def generate_tests():
     Reads the manifest file and dynamically creates a test method for each
     entry, attaching it to the TestPugInterpreter class.
     """
-    def create_test_method(filename, langlevel):
+    def create_test_method(filename: str, langlevel: str) -> Callable[['TestPugInterpreter'], None]:
         """
         This is a 'function factory'. It creates and returns a new function
         that will serve as our test method. This closure captures the filename and langlevel.
         """
-        def test_template(self):
-            run_test_from_file(self, self.process, filename)
+        def test_template(self: 'TestPugInterpreter') -> None:
+            if self.process:
+                run_test_from_file(self, self.process, filename)
+            else:
+                self.fail("Process not initialized")
         # Set the langlevel as an attribute on the test method
-        test_template.langlevel = langlevel
+        test_template.langlevel = langlevel  # type: ignore
         return test_template
 
     print("MANIFEST FILE:", MANIFEST_FILE)
