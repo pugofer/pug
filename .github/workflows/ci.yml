@@ -10,61 +10,134 @@ on:
   workflow_dispatch:   # Allows manual triggering
 
 jobs:
-  build-and-test:
+  build-and-test-linux:
     timeout-minutes: 10  # Prevent jobs from hanging indefinitely
-    strategy:
-      matrix:
-        os: [ubuntu-latest]  # Disabling windows-latest for now
-        include:
-          - os: ubuntu-latest
-            shell: bash
-          # - os: windows-latest
-          #   shell: msys2 {0}
-
-    runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: ${{ matrix.shell }}
-
+    runs-on: ubuntu-latest
+    
     steps:
       # Step 1: Check out the repository's code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 3: Set up Python on Ubuntu
-      - name: Set up Python (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
+      # Step 2: Set up Python
+      - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.x'
 
-      # Step 4: Install Python dependencies
+      # Step 3: Install Python dependencies
       - name: Install Python dependencies
         run: pip install -r requirements-test.txt
 
-      # Step 5: Build the pug interpreter
+      # Step 4: Build the pug interpreter
       - name: Build pug interpreter
         run: make -C src
 
-      # Step 6: Run the tests with XML reporting
+      # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
         run: make -C src test-reports
 
-      # Step 7: Upload test results to GitHub
+      # Step 6: Upload test results to GitHub
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if tests fail
         with:
-          name: Test Results (${{ matrix.os }})
+          name: Test Results (Linux)
           path: test-reports/*.xml
           reporter: java-junit
           fail-on-error: true
 
-      # Step 8: Upload HTML reports as artifacts
+      # Step 7: Upload HTML reports as artifacts
       - name: Upload HTML Test Reports
         uses: actions/upload-artifact@v4
         if: always()  # Upload even if tests fail
         with:
-          name: test-reports-${{ matrix.os }}
+          name: test-reports-linux
+          path: test-reports/
+          retention-days: 30
+
+  build-windows:
+    timeout-minutes: 15  # Allow more time for cross-compilation and Windows setup
+    runs-on: ubuntu-latest
+    
+    steps:
+      # Step 1: Check out the repository's code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Install MinGW-w64 for cross-compilation
+      - name: Install MinGW-w64 UCRT
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mingw-w64
+
+      # Step 3: Cross-compile pug.exe for Windows
+      - name: Cross-compile pug.exe for Windows
+        run: CC=x86_64-w64-mingw32-gcc-ucrt LDFLAGS="-lm -static" make -C src pug
+        
+      # Step 3a: Rename binary to pug.exe for Windows
+      - name: Rename binary to pug.exe
+        run: mv src/pug src/pug.exe
+
+      # Step 4: Upload Windows binary and langlevels as artifacts
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: pug-windows-artifacts
+          path: |
+            src/pug.exe
+            langlevels/
+          retention-days: 30
+
+  test-windows:
+    timeout-minutes: 10
+    runs-on: windows-latest
+    needs: build-windows
+    
+    steps:
+      # Step 1: Check out the repository's code (needed for test files)
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Step 3: Install Python dependencies
+      - name: Install Python dependencies
+        run: pip install -r requirements-test.txt
+
+      # Step 4: Download Windows artifacts
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pug-windows-artifacts
+          path: .
+
+      # Step 5: Run the tests with XML reporting
+      - name: Run interpreter tests with XML reports
+        run: |
+          cd src
+          python ../run_tests_with_reports.py --verbose --xml-output ../test-reports --timeout 180
+        shell: cmd
+
+      # Step 6: Upload test results to GitHub
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if tests fail
+        with:
+          name: Test Results (Windows)
+          path: test-reports/*.xml
+          reporter: java-junit
+          fail-on-error: true
+
+      # Step 7: Upload HTML reports as artifacts
+      - name: Upload HTML Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()  # Upload even if tests fail
+        with:
+          name: test-reports-windows
           path: test-reports/
           retention-days: 30
