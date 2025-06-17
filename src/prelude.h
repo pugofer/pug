@@ -22,6 +22,7 @@
  * update the source.
  *-------------------------------------------------------------------------*/
 
+#if 0
 #define TURBOC   0	/* For IBM PC, using Turbo C 1.5		   */
 #define BCC	 0	/* For IBM PC, using Borland C++ 3.1		   */
 #define WATCOM	 0	/* For IBM PC, using WATCOM C/C++32 v9.5	   */
@@ -44,12 +45,21 @@
 #define ATARI	 0	/* For Atari ST/STE/TT/Falcon w/ Lattice C 5.52 UN */
 #define SGI4	 0	/* For SiliconGraphics Indigo, IRIX v*4*.0.5	UN */
 #define NETBSD	 0	/* For NetBSD-current;  Use for MacOS		   */
-// #define WIN32	 0	/* rusi aug 2013 */
+#define WIN32	 0	/* rusi aug 2013 */
+#endif
 
 // 10 June 2025
 #if defined(__linux__)
 #define LINUX 1
 #endif
+
+#if (defined(__MACH__) && defined(__APPLE__))
+#define NETBSD 1
+//#else
+//#define NETBSD 0
+#endif
+
+
 
 // Below commented out can go; we're using _WIN32 only
 /* #if defined(_WIN32) */
@@ -418,7 +428,9 @@ extern Void     fatal	   Args((String));
 /* #endif */
 
 
+
 // Works all modern systems -- I believe!
+
 #include <sys/stat.h>
 #include <stdint.h>
 #include <string.h>
