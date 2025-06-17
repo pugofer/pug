@@ -31,11 +31,11 @@ jobs:
 
       # Step 4: Build the pug interpreter
       - name: Build pug interpreter
-        run: make -C src
+        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
-        run: make -C src test-reports
+        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src test-reports
 
       # Step 6: Upload test results to GitHub
       - name: Publish Test Results
@@ -77,7 +77,7 @@ jobs:
 
       # Step 4: Build the pug interpreter
       - name: Build pug interpreter
-        run: make CFLAGS=-Wno-deprecated-non-prototype -Wno-parentheses -C src
+        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
