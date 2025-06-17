@@ -75,10 +75,6 @@ jobs:
       - name: Cross-compile pug.exe for Windows
         run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
         
-      # Step 3a: Rename binary to pug.exe for Windows
-      - name: Rename binary to pug.exe
-        run: mv src/pug src/pug.exe
-
       # Step 4: Upload Windows binary and langlevels as artifacts
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
