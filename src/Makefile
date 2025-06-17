@@ -27,10 +27,14 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 # Choose one of these (ATM 64-bit is not working)
 
 #CC		= x86_64-w64-mingw32-gcc
-CC		= gcc
+#CC		= gcc
+
+#FOr Mac compilation
+CC		= zig cc
+CFLAGS		= -target x86_64-macos -Wno-deprecated-non-prototype -Wno-parentheses
 
 #CFLAGS		= -DUSE_READLINE=1
-CFLAGS		=
+#CFLAGS		=
 LDFLAGS    	= -lm
 OPTFLAGS	= -O
 OPT1		=
@@ -39,8 +43,8 @@ OPT1		=
 #all		: gofer gofc runtime.o
 
 pug		: $(IOBJECTS)
-		  $(CC) $(CFLAGS) $(OPTFLAGS) $(IOBJECTS) -o pug $(LDFLAGS)
-		  strip pug
+		  $(CC) $(CFLAGS) $(OPTFLAGS) $(IOBJECTS) -s -o pug $(LDFLAGS)
+#		  strip pug
 
 gofc		: $(COBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(COBJECTS) -o gofc $(LDFLAGS)
