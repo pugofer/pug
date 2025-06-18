@@ -6,7 +6,7 @@ from typing import Callable, Union, Dict, Any
 
 # Platform-specific imports for pexpect functionality
 if sys.platform == "win32":
-    import wexpect as pexpect
+    import wexpect as pexpect  # type: ignore
     # wexpect uses the same exception names directly in the module
     pexpect_exceptions = pexpect
     PexpectSpawn = pexpect.spawn
@@ -21,7 +21,7 @@ MANIFEST_FILE = os.path.join(os.path.dirname(__file__), 'test_manifest.txt')
 
 # --- Generic Test Runner Function ---
 
-def run_test_from_file(test_case: unittest.TestCase, process: Any, filename: str):
+def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename: str):
     """
     A generic, data-driven test runner that reads a file of commands and expected outputs.
 
@@ -53,17 +53,11 @@ def run_test_from_file(test_case: unittest.TestCase, process: Any, filename: str
                 with test_case.subTest(command=command, expected=expected_output):
                     process.sendline(command)
                     # Match against the expected output or the next prompt
-                    try:
-                        index = process.expect_exact([expected_output, PUG_PROMPT], timeout=1)
-                        before_output = str(process.before).strip() if process.before else ""
-                        test_case.assertEqual(index, 0,
-                                              f"Command '{command}' did not produce expected output '{expected_output}'. "
-                                              f"Got: '{before_output}'")
-                    except pexpect_exceptions.TIMEOUT:
-                        # Fail with a concise error message
-                        before_output = str(process.before).strip() if process.before else ""
-                        test_case.fail(f"Command '{command}' timed out. Output: '{before_output}'. Expected: '{expected_output}'.")
-
+                    index = process.expect_exact([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=1)
+                    before_output = str(process.before).strip() if process.before else ""
+                    test_case.assertEqual(index, 0,
+                                            f"Command '{command}' did not produce expected output '{expected_output}'. "
+                                            f"Got: '{before_output}'")
 
                     # Ensure we see the next prompt before continuing
                     process.expect(PUG_PROMPT)
@@ -117,7 +111,7 @@ class TestPugInterpreter(unittest.TestCase):
         env: Dict[str, str] = {'PUG': langlevel_file}
 
         self.process = pexpect.spawn(pug_executable, encoding='utf-8', cwd=src_dir, env=env)  # type: ignore
-        self.process.expect(PUG_PROMPT)
+        self.process.expect(PUG_PROMPT)  # type: ignore
 
     def tearDown(self):
         """Terminates the pug process after each test method."""
@@ -145,7 +139,7 @@ def generate_tests():
         """
         def test_template(self: 'TestPugInterpreter') -> None:
             if self.process:
-                run_test_from_file(self, self.process, filename)
+                run_cmd_test_from_file(self, self.process, filename)
             else:
                 self.fail("Process not initialized")
         # Set the langlevel as an attribute on the test method
@@ -176,7 +170,7 @@ def generate_tests():
 
             # Create a valid Python method name from the filename
             # e.g., "test/arithmetic_test.txt" -> "test_from_file_arithmetic_test_txt"
-            test_name = "test_from_file_" + re.sub(r'[^a-zA-Z0-9]', '_', os.path.basename(test_file_path))
+            test_name = "test_cmd_" + re.sub(r'[^a-zA-Z0-9]', '_', os.path.basename(test_file_path))
 
             # Create the actual test method function
             test_method = create_test_method(test_file_path, langlevel)
