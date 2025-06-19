@@ -28,7 +28,7 @@ CC		?= gcc
 
 #CFLAGS		= -DUSE_READLINE=1
 CFLAGS		?=
-LDFLAGS    	= -lm
+LDFLAGS    	?= -lm
 OPTFLAGS	= -O
 OPT1		=
 #OPT1		= -O1

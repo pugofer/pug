@@ -1,7 +1,7 @@
 # This name will appear in the "Actions" tab of your GitHub repository.
 name: Pug Tests on all platforms
 
-# This workflow runs on pushes to main branches and PRs to devel branch.
+# This workflow runs on pushes to main branches and PRs to main branch.
 on:
   push:
     branches: [ main, tests ]
@@ -13,7 +13,7 @@ jobs:
   build-and-test-linux:
     timeout-minutes: 10  # Prevent jobs from hanging indefinitely
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Check out the repository's code
       - name: Checkout repository
@@ -31,11 +31,11 @@ jobs:
 
       # Step 4: Build the pug interpreter
       - name: Build pug interpreter
-        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src
+        run: make -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
-        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src test-reports
+        run: make -C src test-reports
 
       # Step 6: Upload test results to GitHub
       - name: Publish Test Results
@@ -59,7 +59,7 @@ jobs:
   build-and-test-macos:
     timeout-minutes: 10  # Prevent jobs from hanging indefinitely
     runs-on: macos-latest
-    
+
     steps:
       # Step 1: Check out the repository's code
       - name: Checkout repository
@@ -96,7 +96,7 @@ jobs:
   build-windows:
     timeout-minutes: 15  # Allow more time for cross-compilation and Windows setup
     runs-on: ubuntu-latest
-    
+
     steps:
       # Step 1: Check out the repository's code
       - name: Checkout repository
@@ -115,7 +115,7 @@ jobs:
       # Step 3: Cross-compile pug.exe for Windows
       - name: Cross-compile pug.exe for Windows
         run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
-        
+
       # Step 4: Upload Windows binary as artifact
       - name: Upload Windows artifacts
         uses: actions/upload-artifact@v4
@@ -128,7 +128,7 @@ jobs:
     timeout-minutes: 10
     runs-on: windows-latest
     needs: build-windows
-    
+
     steps:
       # Step 1: Check out the repository's code (needed for test files)
       - name: Checkout repository
