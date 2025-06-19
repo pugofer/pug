@@ -1,5 +1,5 @@
 # Test dependencies for generating reports
 unittest-xml-reporting>=3.2.0
 pexpect>=4.8.0; sys_platform != "win32"
-wexpect>=4.0.0; sys_platform == "win32"
+git+https://github.com/saukap/wexpect.git; sys_platform == "win32"
 setuptools; sys_platform == "win32"  # Required for pkg_resources used by wexpect
