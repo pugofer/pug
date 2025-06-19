@@ -28,4 +28,5 @@ htmlcov/
 *.xml
 
 # AI codding agent
-.clinerules/
+.clinerules/pugc
+pugc.exe
