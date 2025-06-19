@@ -24,18 +24,11 @@ COBJECTS	= gofc.o cbuiltin.o cmachine.o $(OBJECTS)
 # as you use to build the file runtime.o (as specified by the CC macro
 # below).
 
-# Choose one of these (ATM 64-bit is not working)
-
-#CC		= x86_64-w64-mingw32-gcc
-#CC		= gcc
-
-#FOr Mac compilation
-CC		= zig cc
-CFLAGS		= -target x86_64-macos -Wno-deprecated-non-prototype -Wno-parentheses
+CC		?= gcc
 
 #CFLAGS		= -DUSE_READLINE=1
-#CFLAGS		=
-LDFLAGS    	= -lm
+CFLAGS		?=
+LDFLAGS    	?= -lm
 OPTFLAGS	= -O
 OPT1		=
 #OPT1		= -O1
@@ -44,11 +37,20 @@ OPT1		=
 
 pug		: $(IOBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(IOBJECTS) -s -o pug $(LDFLAGS)
-#		  strip pug
+##		  strip pug
 
 gofc		: $(COBJECTS)
 		  $(CC) $(CFLAGS) $(OPTFLAGS) $(COBJECTS) -o gofc $(LDFLAGS)
 		  strip gofc
+
+test     : pug
+		   cd .. && python3 -m unittest discover -v
+
+test-reports : pug
+		   cd .. && python3 run_tests_with_reports.py --verbose --timeout 180
+
+test-ci : pug
+		   cd .. && python3 run_tests_with_reports.py --verbose --xml-output test-reports --timeout 180
 
 .c.o		:
 		  $(CC) -c $(CFLAGS) $(OPTFLAGS) $<
