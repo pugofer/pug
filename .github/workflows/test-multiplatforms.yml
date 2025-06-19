@@ -54,15 +54,6 @@ jobs:
           reporter: java-junit
           fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
 
-      # Step 6b: Alternative test result publishing (GitHub summary)
-      - name: Create Test Summary
-        if: success() || failure()
-        run: |
-          echo "## Linux Test Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Results from running tests on Linux platform" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Full test reports are available as artifacts." >> $GITHUB_STEP_SUMMARY
-
       # Step 7: Upload HTML reports as artifacts
       - name: Upload HTML Test Reports
         uses: actions/upload-artifact@v4
@@ -93,7 +84,7 @@ jobs:
 
       # Step 4: Build the pug interpreter
       - name: Build pug interpreter
-        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration" -C src
+        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration -Wmain-return-type" -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
@@ -108,15 +99,6 @@ jobs:
           path: test-reports/*.xml
           reporter: java-junit
           fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
-
-      # Step 6b: Alternative test result publishing (GitHub summary)
-      - name: Create Test Summary
-        if: success() || failure()
-        run: |
-          echo "## macOS Test Results Summary" >> $GITHUB_STEP_SUMMARY
-          echo "Results from running tests on macOS platform" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Full test reports are available as artifacts." >> $GITHUB_STEP_SUMMARY
 
   build-windows:
     timeout-minutes: 15  # Allow more time for cross-compilation and Windows setup
@@ -192,15 +174,6 @@ jobs:
           reporter: java-junit
           fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
 
-      # Step 6b: Alternative test result publishing (GitHub summary)
-      - name: Create Test Summary
-        if: success() || failure()
-        run: |
-          echo "## Windows Test Results Summary" >> $env:GITHUB_STEP_SUMMARY
-          echo "Results from running tests on Windows platform" >> $env:GITHUB_STEP_SUMMARY
-          echo "" >> $env:GITHUB_STEP_SUMMARY
-          echo "Full test reports are available as artifacts." >> $env:GITHUB_STEP_SUMMARY
-        shell: pwsh
 
       # Step 7: Upload HTML reports as artifacts
       - name: Upload HTML Test Reports
