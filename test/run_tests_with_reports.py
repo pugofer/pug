@@ -37,7 +37,9 @@ def main():
     os.makedirs(args.xml_output, exist_ok=True)
 
     # Set up the test discovery
-    test_dir = Path(__file__).parent / 'test'
+    # When this script is in the 'test' directory, Path(__file__).parent will be 'test/'
+    # and tests (e.g., test_*.py) are expected to be in this same directory.
+    test_dir = Path(__file__).parent
 
     # Set up timeout (Unix-like systems only)
     if hasattr(signal, 'SIGALRM'):
