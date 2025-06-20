@@ -17,8 +17,12 @@ jobs:
     - name: Install dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y build-essential cmake mingw-w64
-    
+        sudo apt-get install -y \
+           build-essential cmake \
+           gcc-mingw-w64-x86-64 \
+           binutils-mingw-w64-x86-64 \
+           mingw-w64-common \
+           
     - name: Build Linux release
       run: |
         mkdir build-linux
