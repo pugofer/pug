@@ -1,0 +1,70 @@
+# This name will appear in the "Actions" tab of your GitHub repository.
+name: Pug Linux Tests
+
+# This workflow runs on pushes to any branch.
+on:
+  push:  # Triggers on every commit to any branch
+  workflow_dispatch:   # Allows manual triggering
+
+# Permissions needed for test reporting
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  actions: read
+
+jobs:
+  build-and-test-linux:
+    timeout-minutes: 10  # Prevent jobs from hanging indefinitely
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Check out the repository's code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      # Step 3: Install Python dependencies
+      - name: Install Python dependencies
+        run: pip install -r requirements-test.txt
+
+      # Step 4: Build the pug interpreter
+      - name: Build pug interpreter
+        run: make -C src
+
+      # Step 5: Run the tests with XML reporting
+      - name: Run interpreter tests with XML reports
+        run: make -C src test-reports
+
+      # Step 6: Upload test results to GitHub
+      - name: Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: success() || failure()    # run this step even if tests fail
+        with:
+          name: Test Results (Linux)
+          path: test-reports/*.xml
+          reporter: java-junit
+          fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
+
+      # Step 6b: Alternative test result publishing (GitHub summary)
+      - name: Create Test Summary
+        if: success() || failure()
+        run: |
+          echo "## Linux Test Results Summary" >> $GITHUB_STEP_SUMMARY
+          echo "Results from running tests on Linux platform" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Full test reports are available as artifacts." >> $GITHUB_STEP_SUMMARY
+
+      # Step 7: Upload HTML reports as artifacts
+      - name: Upload HTML Test Reports
+        uses: actions/upload-artifact@v4
+        if: always()  # Upload even if tests fail
+        with:
+          name: test-reports-linux
+          path: test-reports/
+          retention-days: 30
