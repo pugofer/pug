@@ -47,3 +47,8 @@ env/
 *.pyo
 *.pyd
 __pycache__/
+
+# CMake files
+build/
+build-linux/
+build-windows/
