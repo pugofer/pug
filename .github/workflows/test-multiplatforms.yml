@@ -10,8 +10,7 @@ on:
 jobs:
   build-artifacts:
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
-    
+   
     steps:
     - uses: actions/checkout@v4
     
