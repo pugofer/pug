@@ -25,7 +25,7 @@ test-all-reports: build
 	@echo "Running all tests and generating reports..."
 	$(MAKE) -C test reports
 
-test-all-ci: build
+test-all-ci:
 	@echo "Running all tests for CI (with XML reports)..."
 	$(MAKE) -C test ci
 
