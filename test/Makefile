@@ -2,9 +2,9 @@
 # Should be run from the 'test' directory, or via 'make -C test <target>' from root.
 
 # Determine the Python executable to use.
-# Prefers the one in ../.venv if it exists, otherwise defaults to python3.
+# Prefers the one in ../.pug-test if it exists, otherwise defaults to python3.
 # This path is relative to where python commands will be run (project root after 'cd ..')
-VENV_PYTHON := .venv/bin/python3
+VENV_PYTHON := .pug-test/bin/python3
 SYSTEM_PYTHON := python3
 PYTHON_TO_USE := $(shell if [ -f ../$(VENV_PYTHON) ]; then echo $(VENV_PYTHON); else echo $(SYSTEM_PYTHON); fi)
 
@@ -21,13 +21,13 @@ setup:
 		echo "See https://astral.sh/uv for installation instructions."; \
 		exit 1; \
 	fi
-	@echo "Creating Python 3.12 virtual environment in ../.venv using uv..."
-	cd .. && uv venv .venv --python 3.12
+	@echo "Creating Python 3.12 virtual environment in ../.pug-test using uv..."
+	cd .. && uv venv .pug-test --python 3.12
 	@echo "Installing test dependencies from ../requirements-test.txt..."
-	cd .. && uv pip install --python .venv/bin/python3 -r requirements-test.txt
+	cd .. && uv pip install --python .pug-test/bin/python3 -r requirements-test.txt
 	@echo ""
 	@echo "Test environment setup complete."
-	@echo "To activate the virtual environment (from project root), run: source .venv/bin/activate"
+	@echo "To activate the virtual environment (from project root), run: source .pug-test/bin/activate"
 
 build-pug:
 	@echo "Building pug using CMake..."
@@ -52,7 +52,7 @@ ci: build-pug
 
 clean:
 	@echo "Removing Python virtual environment and test artifacts from project root..."
-	rm -rf ../.venv
+	rm -rf ../.pug-test
 	@echo "Removing CMake build directory..."
 	rm -rf $(BUILD_DIR)
 	@echo "Removing __pycache__ directories..."

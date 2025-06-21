@@ -34,7 +34,7 @@ htmlcov/
 # Python Virtual Environment and tools
 # ------------------------------------
 # Python virtual environments
-.venv/
+.pug-test/
 venv/
 ENV/
 env/
