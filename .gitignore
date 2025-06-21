@@ -28,8 +28,10 @@ htmlcov/
 *.xml
 
 
-# AI codding agent
+
+# AI coding agent
 .clinerules
+
 
 # Python Virtual Environment and tools
 # ------------------------------------
@@ -50,5 +52,4 @@ __pycache__/
 
 # CMake files
 build/
-build-linux/
 build-windows/
