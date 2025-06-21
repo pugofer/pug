@@ -25,13 +25,7 @@ add_executable(pug ${PUG_SOURCES})
 target_include_directories(pug PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_link_libraries(pug m)
 
-# Copy langlevels directory to build directory
-add_custom_command(TARGET pug POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/langlevels
-    ${CMAKE_BINARY_DIR}/langlevels
-    COMMENT "Copying langlevels directory to build output"
-)
+# Note: langlevels directory is copied by the main CMakeLists.txt
 
 # Test command integration
 add_custom_target(test
