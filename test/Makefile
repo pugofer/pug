@@ -8,10 +8,11 @@ VENV_PYTHON := .pug-test/bin/python3
 SYSTEM_PYTHON := python3
 PYTHON_TO_USE := $(shell if [ -f ../$(VENV_PYTHON) ]; then echo $(VENV_PYTHON); else echo $(SYSTEM_PYTHON); fi)
 
-# CMake build directory
+# CMake build directories
 BUILD_DIR := ../build
+BUILD_WIN_DIR := ../build-windows
 
-.PHONY: all setup build-pug run reports ci clean
+.PHONY: all setup build-pug build-win run reports ci clean
 
 all: build-pug run
 
@@ -35,8 +36,22 @@ build-pug:
 		echo "Creating build directory..."; \
 		mkdir -p $(BUILD_DIR); \
 	fi
-	cd $(BUILD_DIR) && cmake .. && make pug
+	cd $(BUILD_DIR) && cmake .. && make pug && make package
 	@echo "Pug built successfully in $(BUILD_DIR)"
+
+build-win:
+	@echo "Building Windows package using mingw-w64..."
+	@if [ ! -d "$(BUILD_WIN_DIR)" ]; then \
+		echo "Creating Windows build directory..."; \
+		mkdir -p $(BUILD_WIN_DIR); \
+	fi
+	cd $(BUILD_WIN_DIR) && \
+		cmake .. \
+		-DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake \
+		-DCMAKE_BUILD_TYPE=Release && \
+		make -j$(nproc) && \
+		make package
+	@echo "Windows packages generated in $(BUILD_WIN_DIR)"
 
 run: build-pug
 	@echo "Running tests from project root using $(PYTHON_TO_USE)..."
@@ -53,8 +68,8 @@ ci: build-pug
 clean:
 	@echo "Removing Python virtual environment and test artifacts from project root..."
 	rm -rf ../.pug-test
-	@echo "Removing CMake build directory..."
-	rm -rf $(BUILD_DIR)
+	@echo "Removing CMake build directories..."
+	rm -rf $(BUILD_DIR) $(BUILD_WIN_DIR)
 	@echo "Removing __pycache__ directories..."
 	# Remove __pycache__ from project root if it exists
 	@if [ -d ../__pycache__ ]; then rm -rf ../__pycache__; fi

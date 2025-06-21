@@ -22,6 +22,7 @@ jobs:
            gcc-mingw-w64-x86-64 \
            binutils-mingw-w64-x86-64 \
            mingw-w64-common \
+           nsis \
            
     - name: Build Linux release
       run: |
