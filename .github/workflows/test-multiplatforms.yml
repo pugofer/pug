@@ -25,10 +25,10 @@ jobs:
            nsis \
            
     - name: Build Linux release
-      run: make -C test build-linux
+      run: make -C test build-pug
     
     - name: Build Windows release
-      run: make -C test build-windows
+      run: make -C test build-win
     
     - name: Package releases
       run: |
