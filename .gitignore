@@ -27,5 +27,23 @@ htmlcov/
 .coverage
 *.xml
 
+
 # AI codding agent
 .clinerules
+
+# Python Virtual Environment and tools
+# ------------------------------------
+# Python virtual environments
+.pug-test/
+venv/
+ENV/
+env/
+
+# direnv cache
+.direnv/
+
+# Python compiled files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
