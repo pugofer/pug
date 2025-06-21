@@ -25,19 +25,10 @@ jobs:
            nsis \
            
     - name: Build Linux release
-      run: |
-        mkdir build-linux
-        cd build-linux
-        cmake .. -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --parallel
-        cpack
+      run: make -C test build-linux
     
     - name: Build Windows release
-      run: |
-        mkdir build-windows
-        cd build-windows
-        cmake .. -DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake -DCMAKE_BUILD_TYPE=Release
-        cmake --build . --parallel
+      run: make -C test build-windows
     
     - name: Package releases
       run: |
