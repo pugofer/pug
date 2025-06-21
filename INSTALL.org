@@ -1,13 +1,12 @@
 * Install prerequisites
 #+BEGIN_SRC shell
-$ sudo apt-get install gcc build-essential git emacs
+$ sudo apt install build-essential git
 #+END_SRC
 * Clone pug
 #+BEGIN_SRC shell
 $ git clone https://github.com/pugofer/pug.git
 #+END_SRC
 * Build
-
 Above should make a directory called =pug=\\
 Usually in your home but that depends on where you ran the git clone.
 
@@ -15,7 +14,7 @@ Following I'll use the expression =/path/to/pug/...=
 
 Please replace =path/to= by the actual path.
 
-In most cases =~= should be sufficient.
+In most cases =$HOME= should be sufficient.
 
 *Except the shell export variable* =PUG= -- see below at end of *Check executable*
 
@@ -23,9 +22,7 @@ cd into =/path/to/pug/src= and run
 #+BEGIN_SRC shell
 $ make
 #+END_SRC
-
 * Check executable
-
 Above should make an executable called pug. When you run it (at shell as:)
 #+BEGIN_SRC shell
 $ ./pug
@@ -38,16 +35,16 @@ To run it from anywhere you need:
 1. =pug= executable in your =PATH=
 2. =PUG= environment variable setup like so:
 #+BEGIN_SRC shell
-$ export PUG=/path/to/pug/preludes/pup.pre
+$ export PUG=/path/to/pug/langlevels/pug.pre
 #+END_SRC
 
 Warning: As of now ~pug~ does not understand =~=; Use =$HOME= 
 
 The 3 standard preludes you can try are
 - =pup= :: Absolutely minimum required to start
-- =pug= :: No classes =Eq=, =Num= etc
-- =standard= :: the standard prelude
-- =cat= :: the constructor class prelude
+- =pug= :: No classes =Eq=, =Num= etc — *Best for beginners*
+- =kit= :: The original standard prelude — Think basic kit for pug work
+- =cat= :: the constructor class (/Category Theory/) prelude
 * Non-emacs Use
 If you dont want to use emacs, this much should be sufficient:
 
@@ -55,4 +52,5 @@ Just have ~pug~ running in one window, an editor of your choice in another and w
 #+BEGIN_SRC haskell
 :l filename.gs
 #+END_SRC
-For emacs setup you will need to setup from the [[https://github.com/pugofer/emacs-pug][emacs repo]].
+- For emacs use [[https://github.com/pugofer/emacs-pug][emacs repo]]
+- For vscode use [[https://github.com/pugofer/https://github.com/pugofer/vscode-pug/][vscode repo]]
