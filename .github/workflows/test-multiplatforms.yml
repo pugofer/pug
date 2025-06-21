@@ -36,13 +36,13 @@ jobs:
         mkdir -p releases
         
         # Linux package
-        cd build-linux
-        tar -czf ../releases/pug-linux-x64.tar.gz bin/pug bin/langlevels
+        cd build
+        cp pug*.deb pug*.gz ../releases
         cd ..
         
         # Windows package
         cd build-windows
-        zip -r ../releases/pug-windows-x64.zip bin/pug.exe bin/langlevels
+        cp pug*.zip pug*.exe ../releases
         cd ..
     
     - name: Upload release artifacts
