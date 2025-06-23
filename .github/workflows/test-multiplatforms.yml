@@ -37,7 +37,7 @@ jobs:
         
         # Linux package
         cd build
-        cp pug*.deb pug*.gz ../releases
+        cp pug*.gz ../releases
         cd ..
         
         # Windows package

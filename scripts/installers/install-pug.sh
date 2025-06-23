@@ -16,15 +16,15 @@ NC='\033[0m' # No Color
 
 # Helper functions
 log_info() {
-    echo -e "${GREEN}[INFO]${NC} $1"
+    echo -e "${GREEN}[INFO]${NC} $1" >&2
 }
 
 log_warn() {
-    echo -e "${YELLOW}[WARN]${NC} $1"
+    echo -e "${YELLOW}[WARN]${NC} $1" >&2
 }
 
 log_error() {
-    echo -e "${RED}[ERROR]${NC} $1"
+    echo -e "${RED}[ERROR]${NC} $1" >&2
 }
 
 # Detect architecture and OS
@@ -39,7 +39,7 @@ detect_platform() {
     esac
     
     case $(uname -s) in
-        Linux) os="linux" ;;
+        Linux) os="Linux" ;;
         *) log_error "Unsupported OS: $(uname -s)"; exit 1 ;;
     esac
     
@@ -100,22 +100,35 @@ install_pug() {
     log_info "Extracting package"
     tar -xzf "$package_name"
     
+    # Find the extracted directory (e.g., pug-1.0.0-Linux, pug-1.0.0-Darwin, etc.)
+    local extracted_dir
+    extracted_dir=$(find . -maxdepth 1 -type d -name "pug-*" | head -1)
+    
+    if [ -z "$extracted_dir" ]; then
+        log_error "Could not find extracted pug directory"
+        exit 1
+    fi
+    
+    log_info "Found extracted directory: $extracted_dir"
+    
     # Install binary
-    if [ -f "$PROGRAM_NAME" ]; then
-        chmod +x "$PROGRAM_NAME"
-        mv "$PROGRAM_NAME" "$HOME/.local/bin/"
+    local binary_path="$extracted_dir/bin/$PROGRAM_NAME"
+    if [ -f "$binary_path" ]; then
+        chmod +x "$binary_path"
+        mv "$binary_path" "$HOME/.local/bin/"
         log_info "Binary installed to ~/.local/bin/${PROGRAM_NAME}"
     else
-        log_error "Binary '${PROGRAM_NAME}' not found in package"
+        log_error "Binary '${PROGRAM_NAME}' not found at $binary_path"
         exit 1
     fi
     
     # Install langlevels folder
-    if [ -d "langlevels" ]; then
-        cp -r langlevels "$HOME/.local/share/${PROGRAM_NAME}/"
+    local langlevels_path="$extracted_dir/share/pug/langlevels"
+    if [ -d "$langlevels_path" ]; then
+        cp -r "$langlevels_path" "$HOME/.local/share/${PROGRAM_NAME}/"
         log_info "Language levels installed to ~/.local/share/${PROGRAM_NAME}/langlevels/"
     else
-        log_error "Directory 'langlevels' not found in package"
+        log_error "Directory 'langlevels' not found at $langlevels_path"
         exit 1
     fi
     

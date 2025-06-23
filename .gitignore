@@ -18,15 +18,11 @@ pugc
 pugc.exe
 
 
-# Python cache
-__pycache__
-
 # Test reports and artifacts
 test-reports/
 htmlcov/
 .coverage
 *.xml
-
 
 
 # AI coding agent

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.12)
-project(pug VERSION 1.0.0 LANGUAGES C)
+project(pug VERSION 0.3 LANGUAGES C)
 
 # Set default build type
 if(NOT CMAKE_BUILD_TYPE)
