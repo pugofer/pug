@@ -19,6 +19,13 @@ else:
 PUG_PROMPT = r"\? " # The prompt is a literal '?' followed by a space.
 MANIFEST_FILE = os.path.join(os.path.dirname(__file__), 'test_manifest.txt')
 
+# --- transforming command with absolute path
+def transform_command(command):
+    prefix = command[:2] 
+    script_path = f"scripts/{command[2:].strip()}"
+    path = os.path.join(os.path.dirname(__file__),script_path)
+    return f"{prefix} {path}"
+
 # --- Generic Test Runner Function ---
 
 def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename: str):
@@ -46,16 +53,30 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
 
         if line.startswith('? '):
             command = line[2:]
+            if line.startswith('? :'):
+                command = transform_command(command)
+                
             i += 1
+            is_regex = False 
+
+            if i < len(lines) and lines[i].strip() == '-- REGEX MATCH':
+                is_regex = True
+                i+=1
+
             if i < len(lines):
                 expected_output = lines[i].strip()
 
                 with test_case.subTest(command=command, expected=expected_output):
                     process.sendline(command)
                     # Match against the expected output or the next prompt
-                    index = process.expect_exact([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=1)
-                    before_output = str(process.before).strip() if process.before else ""
-                    test_case.assertEqual(index, 0,
+                    if is_regex:
+                        index = process.expect([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=2)
+                        test_case.assertEqual(index, 0,
+                                            f"Regex pattern did not match.\nPattern:\n'{expected_output}'\nGot:\n'{process.before}'")
+                    else:
+                        index = process.expect_exact([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=1)
+                        before_output = str(process.before).strip() if process.before else ""
+                        test_case.assertEqual(index, 0,
                                             f"Command '{command}' did not produce expected output '{expected_output}'. "
                                             f"Got: '{before_output}'")
 

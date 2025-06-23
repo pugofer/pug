@@ -1,0 +1,11 @@
+? :l examples.pgs
+-- REGEX MATCH
+Pug session for:
+
+? fact.4
+24 : Int
+
+? :l examples.pgs
+Pug session for:
+../langlevels/pug.pre
+/home/saurabh/p/pugg/pug/test/scripts/examples.pgs
