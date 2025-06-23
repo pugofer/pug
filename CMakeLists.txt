@@ -31,8 +31,7 @@ file(COPY ${CMAKE_SOURCE_DIR}/langlevels
 # Platform-specific installation settings
 install(TARGETS pug 
         RUNTIME DESTINATION bin)
-install(DIRECTORY langlevels/ 
-        DESTINATION bin/langlevels)
+install(DIRECTORY langlevels/ DESTINATION share/pug/langlevels)
 
 # CPack configuration for future installer creation
 set(CPACK_PACKAGE_NAME "pug")
@@ -45,7 +44,7 @@ if(WIN32)
 elseif(APPLE)
     set(CPACK_GENERATOR "ZIP;DragNDrop")
 else()
-    set(CPACK_GENERATOR "TGZ;DEB")
+    set(CPACK_GENERATOR "TGZ")
 endif()
 
 include(CPack)

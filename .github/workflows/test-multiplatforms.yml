@@ -2,9 +2,9 @@ name: Test Multi-Platforms
 
 on:
   push:
-    branches: [ main, cpack-builds ]
+    branches: [ main ] # , cpack-builds
   pull_request:
-    branches: [ main,  ]
+    branches: [ main  ]
   workflow_dispatch:
 
 jobs:
