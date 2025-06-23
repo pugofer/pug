@@ -53,9 +53,9 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
 
         if line.startswith('? '):
             command = line[2:]
-            if line.startswith('? :'):
+            if line.startswith('? :l'):
                 command = transform_command(command)
-                
+
             i += 1
             is_regex = False 
 
