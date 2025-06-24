@@ -42,7 +42,7 @@ jobs:
         
         # Windows package
         cd build-windows
-        cp pug*.zip pug*.exe ../releases
+        cp pug*.zip ../releases
         cd ..
     
     - name: Upload release artifacts
