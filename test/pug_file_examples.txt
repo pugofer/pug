@@ -3,10 +3,3 @@ Pug session for:
 
 ? fact.4
 24 : Int
-
-? 2.5+3.5
-ERROR: Type error in application
-*** expression     : 2.5 + 3.5
-*** term           : 3.5
-*** type           : Float
-*** does not match : Int

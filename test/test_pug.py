@@ -8,11 +8,11 @@ from typing import Callable, Union, Dict, Any
 if sys.platform == "win32":
     import wexpect as pexpect  # type: ignore
     # wexpect uses the same exception names directly in the module
-    #pexpect_exceptions = pexpect
+    # pexpect_exceptions = pexpect
     PexpectSpawn = pexpect.spawn
 else:
     import pexpect
-    #import pexpect.exceptions as pexpect_exceptions
+    # import pexpect.exceptions as pexpect_exceptions
     PexpectSpawn = pexpect.spawn
 
 # --- Configuration ---
