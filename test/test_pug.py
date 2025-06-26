@@ -8,11 +8,11 @@ from typing import Callable, Union, Dict, Any
 if sys.platform == "win32":
     import wexpect as pexpect  # type: ignore
     # wexpect uses the same exception names directly in the module
-    pexpect_exceptions = pexpect
+    #pexpect_exceptions = pexpect
     PexpectSpawn = pexpect.spawn
 else:
     import pexpect
-    import pexpect.exceptions as pexpect_exceptions
+    #import pexpect.exceptions as pexpect_exceptions
     PexpectSpawn = pexpect.spawn
 
 # --- Configuration ---
@@ -20,11 +20,67 @@ PUG_PROMPT = r"\? " # The prompt is a literal '?' followed by a space.
 MANIFEST_FILE = os.path.join(os.path.dirname(__file__), 'test_manifest.txt')
 
 # --- transforming command with absolute path
-def transform_command(command):
+def transform_command(command: str):
     prefix = command[:2] 
     script_path = f"scripts/{command[2:].strip()}"
     path = os.path.join(os.path.dirname(__file__),script_path)
     return f"{prefix} {path}"
+
+# --- Function to read test file and create simple DS
+def read_test_from_file(filename: str) -> list[Dict[str,str | bool | tuple[int,int]]]:
+    """
+    This function takes the filename, reads it, and construct the dictionary 
+    which has all the required fields:
+                command:
+                expected_output:
+                regex:
+                line_range:
+    and makes a collection of such commands
+    """
+    cmd_list: list[Dict[str,str | bool | tuple[int,int]]] = []
+    
+    # read file
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+
+    i = 0
+    while i<len(lines):
+        line = lines[i].strip()
+        if not line or line.startswith('#'): # Ignore empty lines and comments
+            i += 1
+            continue
+        if line.startswith('? '):
+            startline = i+1                 # for line range
+            command = line[2:]
+            regex = False
+
+            if line.endswith('--REGEX_MATCH'): # Regex match found
+                command = line[2:-13]
+                regex = True
+
+            if command.startswith(':l'):
+                command = transform_command(command)
+            
+            i += 1
+            expected_output_lines: list[str] = []
+
+            while i < len(lines):
+                next_line = lines[i]
+                if next_line.strip().startswith('? '):  # next command begins
+                    break
+                expected_output_lines.append(next_line.rstrip('\n'))
+                i += 1
+            expected_output = '\r\n'.join(expected_output_lines)
+            endline = i                    # for line range
+            cmd: Dict[str,str | bool | tuple[int,int]] = {
+                "command": command,
+                "expected_output": expected_output,
+                "regex": regex,
+                "line_range": (startline,endline)
+            }
+            cmd_list.append(cmd)
+    return cmd_list
+
 
 # --- Generic Test Runner Function ---
 
@@ -39,53 +95,35 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
     """
     if not os.path.exists(filename):
         test_case.fail(f"Test data file not found at {filename}")
+    
+    # command list having all the commands and expected result in it.
+    cmd_list = read_test_from_file(filename)
 
-    with open(filename, 'r') as f:
-        lines = f.readlines()
-
-    # Simple parser for the test file
-    i = 0
-    while i < len(lines):
-        line = lines[i].strip()
-        if not line or line.startswith('#'): # Ignore empty lines and comments
-            i += 1
-            continue
-
-        if line.startswith('? '):
-            command = line[2:]
-            if line.startswith('? :l'):
-                command = transform_command(command)
-
-            i += 1
-            is_regex = False 
-
-            if i < len(lines) and lines[i].strip() == '-- REGEX MATCH':
-                is_regex = True
-                i+=1
-
-            if i < len(lines):
-                expected_output = lines[i].strip()
-
-                with test_case.subTest(command=command, expected=expected_output):
-                    process.sendline(command)
+    # Running each command to test
+    for cmd in cmd_list:
+        command = cmd["command"]
+        expected_output = cmd["expected_output"]
+        is_regex = cmd["regex"]
+        if expected_output:
+            with test_case.subTest(command=command, expected=expected_output):
+                process.sendline(command)
                     # Match against the expected output or the next prompt
-                    if is_regex:
-                        index = process.expect([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=2)
-                        test_case.assertEqual(index, 0,
-                                            f"Regex pattern did not match.\nPattern:\n'{expected_output}'\nGot:\n'{process.before}'")
-                    else:
-                        index = process.expect_exact([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=1)
-                        before_output = str(process.before).strip() if process.before else ""
-                        test_case.assertEqual(index, 0,
+                if is_regex:
+                    index = process.expect([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=2)
+                    before_output = str(process.before).strip() if process.before else ""
+                    test_case.assertEqual(index, 0,
+                                            f"Regex pattern did not match.\nPattern:\n'{expected_output}'\nGot:\n'{before_output}'")
+                else:
+                    index = process.expect_exact([expected_output, PUG_PROMPT, pexpect.EOF, pexpect.TIMEOUT], timeout=2)
+                    before_output = str(process.before).strip() if process.before else ""
+                    test_case.assertEqual(index, 0,
                                             f"Command '{command}' did not produce expected output '{expected_output}'. "
                                             f"Got: '{before_output}'")
 
                     # Ensure we see the next prompt before continuing
-                    process.expect(PUG_PROMPT)
-            else:
-                test_case.fail(f"Test file format error in {filename}: Command '{command}' has no expected output.")
-        i += 1
-
+                process.expect(PUG_PROMPT)
+        else:
+            test_case.fail(f"Test file format error in {filename}: Command '{command}' has no expected output.")
 
 # --- Test Suite Class ---
 

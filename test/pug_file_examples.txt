@@ -1,11 +1,12 @@
-? :l examples.pgs
--- REGEX MATCH
+? :l examples.pgs --REGEX_MATCH
 Pug session for:
 
 ? fact.4
 24 : Int
 
-? :l examples.pgs
-Pug session for:
-../langlevels/pug.pre
-/home/saurabh/p/pugg/pug/test/scripts/examples.pgs
+? 2.5+3.5
+ERROR: Type error in application
+*** expression     : 2.5 + 3.5
+*** term           : 3.5
+*** type           : Float
+*** does not match : Int
