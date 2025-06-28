@@ -33,15 +33,19 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements-test.txt
 
-      # Step 4: Build the pug interpreter
-      - name: Build pug interpreter
-        run: make -C src
+      # Step 4: Install libedit
+      - name: Install libedit-dev
+        run: sudo apt-get update && sudo apt-get install -y libedit-dev
 
-      # Step 5: Run the tests with XML reporting
+      # Step 5: Build the pug interpreter with readline support
+      - name: Build pug interpreter
+        run: make CFLAGS="-DUSE_READLINE=1" LDFLAGS="-ledit" -C src
+
+      # Step 6: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
         run: make -C src test-reports
 
-      # Step 6: Upload test results to GitHub
+      # Step 7: Upload test results to GitHub
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if tests fail
@@ -51,7 +55,7 @@ jobs:
           reporter: java-junit
           fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
 
-      # Step 6b: Alternative test result publishing (GitHub summary)
+      # Step 8: Alternative test result publishing (GitHub summary)
       - name: Create Test Summary
         if: success() || failure()
         run: |
@@ -60,7 +64,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Full test reports are available as artifacts." >> $GITHUB_STEP_SUMMARY
 
-      # Step 7: Upload HTML reports as artifacts
+      # Step 9: Upload HTML reports as artifacts
       - name: Upload HTML Test Reports
         uses: actions/upload-artifact@v4
         if: always()  # Upload even if tests fail
