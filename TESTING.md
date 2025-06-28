@@ -21,6 +21,15 @@ This document outlines the steps to set up a consistent Python testing environme
 
 All commands below should be run from the **project root directory**.
 
+If you have uv setup run from the **project root directory**.
+*   **`make setup-tests`**:
+    *   Checks for `uv`.
+    *   Creates the `.pug-test` virtual environment (Python 3.12).
+    *   Installs test dependencies into `.pug-test`.
+    *   This is the recommended first step.
+    This should end with ""Test environment setup complete"".
+
+If you want to make setup manually, follow commands below.
 1.  **Create Virtual Environment:**
     Create a virtual environment named `.pug-test` in the project root, specifically using Python 3.12:
     ```bash

@@ -1,0 +1,5 @@
+? :l examples.pgs --REGEX_MATCH
+Pug session for:
+
+? fact.4
+24 : Int
