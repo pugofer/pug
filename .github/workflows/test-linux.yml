@@ -39,7 +39,7 @@ jobs:
 
       # Step 5: Build the pug interpreter with readline support
       - name: Build pug interpreter
-        run: make CFLAGS="-DUSE_READLINE=1" LDFLAGS="-ledit" -C src
+        run: make CFLAGS="-DUSE_READLINE=1" LDFLAGS="-ledit -lm" -C src
 
       # Step 6: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
