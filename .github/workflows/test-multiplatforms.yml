@@ -1,185 +1,52 @@
-# This name will appear in the "Actions" tab of your GitHub repository.
-name: Pug Tests on all platforms
+name: Test Multi-Platforms
 
-# This workflow runs on pushes to main branches and PRs to main branch.
 on:
   push:
-    branches: [ main, tests ]
+    branches: [ main ] # , cpack-builds
   pull_request:
-    branches: [ main ]
-  workflow_dispatch:   # Allows manual triggering
-
-# Permissions needed for test reporting
-permissions:
-  contents: read
-  checks: write
-  pull-requests: write
-  actions: read
+    branches: [ main  ]
+  workflow_dispatch:
 
 jobs:
-  build-and-test-linux:
-    timeout-minutes: 10  # Prevent jobs from hanging indefinitely
+  build-artifacts:
     runs-on: ubuntu-latest
-
+   
     steps:
-      # Step 1: Check out the repository's code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      # Step 3: Install Python dependencies
-      - name: Install Python dependencies
-        run: pip install -r requirements-test.txt
-
-      # Step 4: Build the pug interpreter
-      - name: Build pug interpreter
-        run: make -C src
-
-      # Step 5: Run the tests with XML reporting
-      - name: Run interpreter tests with XML reports
-        run: make -C src test-reports
-
-      # Step 6: Upload test results to GitHub
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if tests fail
-        with:
-          name: Test Results (Linux)
-          path: test-reports/*.xml
-          reporter: java-junit
-          fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
-
-      # Step 7: Upload HTML reports as artifacts
-      - name: Upload HTML Test Reports
-        uses: actions/upload-artifact@v4
-        if: always()  # Upload even if tests fail
-        with:
-          name: test-reports-linux
-          path: test-reports/
-          retention-days: 30
-
-  build-and-test-macos:
-    timeout-minutes: 10  # Prevent jobs from hanging indefinitely
-    runs-on: macos-latest
-
-    steps:
-      # Step 1: Check out the repository's code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.x'
-
-      # Step 3: Install Python dependencies
-      - name: Install Python dependencies
-        run: pip install -r requirements-test.txt
-
-      # Step 4: Build the pug interpreter
-      - name: Build pug interpreter
-        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration -Wmain-return-type" -C src
-
-      # Step 5: Run the tests with XML reporting
-      - name: Run interpreter tests with XML reports
-        run: make -C src test-reports
-
-      # Step 6: Upload test results to GitHub
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if tests fail
-        with:
-          name: Test Results (macOS)
-          path: test-reports/*.xml
-          reporter: java-junit
-          fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
-
-  build-windows:
-    timeout-minutes: 15  # Allow more time for cross-compilation and Windows setup
-    runs-on: ubuntu-latest
-
-    steps:
-      # Step 1: Check out the repository's code
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Install minimal MinGW-w64 packages for cross-compilation
-      - name: Install minimal MinGW-w64 packages
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            gcc-mingw-w64-x86-64 \
-            binutils-mingw-w64-x86-64 \
-            mingw-w64-common \
-            bison \
-
-      # Step 3: Cross-compile pug.exe for Windows
-      - name: Cross-compile pug.exe for Windows
-        run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
-
-      # Step 4: Upload Windows binary as artifact
-      - name: Upload Windows artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: pug-windows-artifacts
-          path: src/pug.exe
-          retention-days: 30
-
-  test-windows:
-    timeout-minutes: 10
-    runs-on: windows-latest
-    needs: build-windows
-
-    steps:
-      # Step 1: Check out the repository's code (needed for test files)
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      # Step 2: Set up Python
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.12'
-
-      # Step 3: Install Python dependencies
-      - name: Install Python dependencies
-        run: pip install -r requirements-test.txt
-
-      # Step 4: Download Windows artifacts
-      - name: Download Windows artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: pug-windows-artifacts
-          path: src/
-
-      # Step 5: Run the tests with XML reporting
-      - name: Run interpreter tests with XML reports
-        run: |
-          make test-all-ci
-        shell: pwsh
-
-      # Step 6: Upload test results to GitHub
-      - name: Publish Test Results
-        uses: dorny/test-reporter@v1
-        if: success() || failure()    # run this step even if tests fail
-        with:
-          name: Test Results (Windows)
-          path: test-reports/*.xml
-          reporter: java-junit
-          fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
-
-
-      # Step 7: Upload HTML reports as artifacts
-      - name: Upload HTML Test Reports
-        uses: actions/upload-artifact@v4
-        if: always()  # Upload even if tests fail
-        with:
-          name: test-reports-windows
-          path: test-reports/
-          retention-days: 30
+    - uses: actions/checkout@v4
+    
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+           build-essential cmake \
+           gcc-mingw-w64-x86-64 \
+           binutils-mingw-w64-x86-64 \
+           mingw-w64-common \
+           nsis \
+           
+    - name: Build Linux release
+      run: make -C test build-pug
+    
+    - name: Build Windows release
+      run: make -C test build-win
+    
+    - name: Package releases
+      run: |
+        # Create release packages
+        mkdir -p releases
+        
+        # Linux package
+        cd build
+        cp pug*.gz ../releases
+        cd ..
+        
+        # Windows package
+        cd build-windows
+        cp pug*.zip ../releases
+        cd ..
+    
+    - name: Upload release artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: pug-releases
+        path: releases/

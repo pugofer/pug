@@ -8,9 +8,13 @@ VENV_PYTHON := .pug-test/bin/python3
 SYSTEM_PYTHON := python3
 PYTHON_TO_USE := $(shell if [ -f ../$(VENV_PYTHON) ]; then echo $(VENV_PYTHON); else echo $(SYSTEM_PYTHON); fi)
 
-.PHONY: all setup run reports ci clean
+# CMake build directories
+BUILD_DIR := ../build
+BUILD_WIN_DIR := ../build-windows
 
-all: run
+.PHONY: all setup build-pug build-win run reports ci clean
+
+all: build-pug run
 
 setup:
 	@if ! command -v uv > /dev/null; then \
@@ -26,21 +30,46 @@ setup:
 	@echo "Test environment setup complete."
 	@echo "To activate the virtual environment (from project root), run: source .pug-test/bin/activate"
 
-run:
+build-pug:
+	@echo "Building pug using CMake..."
+	@if [ ! -d "$(BUILD_DIR)" ]; then \
+		echo "Creating build directory..."; \
+		mkdir -p $(BUILD_DIR); \
+	fi
+	cd $(BUILD_DIR) && cmake .. && make pug && make package
+	@echo "Pug built successfully in $(BUILD_DIR)"
+
+build-win:
+	@echo "Building Windows package using mingw-w64..."
+	@if [ ! -d "$(BUILD_WIN_DIR)" ]; then \
+		echo "Creating Windows build directory..."; \
+		mkdir -p $(BUILD_WIN_DIR); \
+	fi
+	cd $(BUILD_WIN_DIR) && \
+		cmake .. \
+		-DCMAKE_TOOLCHAIN_FILE=../cmake/mingw-w64-toolchain.cmake \
+		-DCMAKE_BUILD_TYPE=Release && \
+		make -j$(nproc) && \
+		make package
+	@echo "Windows packages generated in $(BUILD_WIN_DIR)"
+
+run: build-pug
 	@echo "Running tests from project root using $(PYTHON_TO_USE)..."
 	cd .. && $(PYTHON_TO_USE) -m unittest discover -v
 
-reports:
+reports: build-pug
 	@echo "Running tests with reports from project root using $(PYTHON_TO_USE)..."
 	cd .. && $(PYTHON_TO_USE) test/run_tests_with_reports.py --verbose --timeout 180
 
-ci:
+ci: build-pug
 	@echo "Running CI tests with reports from project root using $(PYTHON_TO_USE)..."
 	cd .. && $(PYTHON_TO_USE) test/run_tests_with_reports.py --verbose --xml-output test-reports --timeout 180
 
 clean:
 	@echo "Removing Python virtual environment and test artifacts from project root..."
 	rm -rf ../.pug-test
+	@echo "Removing CMake build directories..."
+	rm -rf $(BUILD_DIR) $(BUILD_WIN_DIR)
 	@echo "Removing __pycache__ directories..."
 	# Remove __pycache__ from project root if it exists
 	@if [ -d ../__pycache__ ]; then rm -rf ../__pycache__; fi

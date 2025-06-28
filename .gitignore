@@ -18,9 +18,6 @@ pugc
 pugc.exe
 
 
-# Python cache
-__pycache__
-
 # Test reports and artifacts
 test-reports/
 htmlcov/
@@ -28,8 +25,9 @@ htmlcov/
 *.xml
 
 
-# AI codding agent
+# AI coding agent
 .clinerules
+
 
 # Python Virtual Environment and tools
 # ------------------------------------
@@ -47,3 +45,7 @@ env/
 *.pyo
 *.pyd
 __pycache__/
+
+# CMake files
+build/
+build-windows/
