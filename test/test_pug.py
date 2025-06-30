@@ -33,7 +33,7 @@ else:
 
 # --- transforming command with absolute path
 def transform_command(command: str):
-    prefix = command[:2] 
+    prefix = command[:2]
     script_path = f"scripts/{command[2:].strip()}"
     path = os.path.join(os.path.dirname(__file__),script_path)
     return f"{prefix} {path}"
@@ -41,7 +41,7 @@ def transform_command(command: str):
 # --- Function to read test file and create simple DS
 def read_test_from_file(filename: str) -> list[Dict[str,str | bool | tuple[int,int]]]:
     """
-    This function takes the filename, reads it, and construct the dictionary 
+    This function takes the filename, reads it, and construct the dictionary
     which has all the required fields:
                 command:
                 expected_output:
@@ -50,7 +50,7 @@ def read_test_from_file(filename: str) -> list[Dict[str,str | bool | tuple[int,i
     and makes a collection of such commands
     """
     cmd_list: list[Dict[str,str | bool | tuple[int,int]]] = []
-    
+
     # read file
     with open(filename, 'r') as f:
         lines = f.readlines()
@@ -72,7 +72,7 @@ def read_test_from_file(filename: str) -> list[Dict[str,str | bool | tuple[int,i
 
             if command.startswith(':l'):
                 command = transform_command(command)
-            
+
             i += 1
             expected_output_lines: list[str] = []
 
@@ -107,7 +107,7 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
     """
     if not os.path.exists(filename):
         test_case.fail(f"Test data file not found at {filename}")
-    
+
     # command list having all the commands and expected result in it.
     cmd_list = read_test_from_file(filename)
 
@@ -150,7 +150,7 @@ class TestPugInterpreter(unittest.TestCase):
     def setUp(self):
         """Sets up a new pug interpreter process before each test method."""
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        src_dir = os.path.join(script_dir, '../src/')
+        src_dir = os.path.abspath(os.path.join(script_dir, '../src/'))
 
         # Calculate absolute path to langlevels directory
         test_dir = os.path.dirname(os.path.abspath(__file__))
@@ -158,10 +158,8 @@ class TestPugInterpreter(unittest.TestCase):
         langlevels_dir = os.path.join(project_root, 'langlevels')
 
         # Handle platform-specific executable names
-        if sys.platform == "win32":
-            pug_executable = os.path.join(src_dir, 'pug.exe')
-        else:
-            pug_executable = os.path.join(src_dir, 'pug')
+        executable_name = 'pug.exe' if sys.platform == "win32" else 'pug'
+        pug_executable = os.path.abspath(os.path.join(src_dir, executable_name))
 
         if not os.path.exists(pug_executable):
             self.fail(f"Pug executable not found at {pug_executable}. "
@@ -196,6 +194,7 @@ class TestPugInterpreter(unittest.TestCase):
             self.process.expect(pexpect.EOF)
             self.assertFalse(self.process.isalive(), "Process did not terminate after ':q' command.")
 
+    @unittest.skipIf(sys.platform == "win32", "Readline test not fully functional on Windows")
     def test_02_readline_support(self):
         """
         Tests readline support for history and cursor navigation.
@@ -211,7 +210,7 @@ class TestPugInterpreter(unittest.TestCase):
         self.process.sendline("2+2")
         self.process.expect_exact("4")
         self.process.expect(PUG_PROMPT)
-        
+
         # Press UP to get "2+2", then UP again for "1+1"
         self.process.send(UP_ARROW)
         self.process.expect_exact("2+2")
@@ -226,7 +225,7 @@ class TestPugInterpreter(unittest.TestCase):
 
         # 2. Test Cursor Movement and Editing
         # Clear the line first (Ctrl+U)
-        self.process.send("\x15") 
+        self.process.send("\x15")
         self.process.send("10+20")
         self.process.expect_exact("10+20")
 
@@ -235,7 +234,7 @@ class TestPugInterpreter(unittest.TestCase):
         self.process.send("3")         # Line becomes 10+230
         self.process.send(RIGHT_ARROW) # Cursor is now at the end of the line
         self.process.send("4")         # Line becomes 10+2304
-        
+
         # Now, execute the command "10+2304" by sending a newline
         self.process.sendline("")
         # The result of 10 + 2304 is 2314
