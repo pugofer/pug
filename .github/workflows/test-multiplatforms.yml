@@ -125,7 +125,7 @@ jobs:
 
       # Step 3: Cross-compile pug.exe for Windows
       - name: Cross-compile pug.exe for Windows
-        run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
+        run: CC=x86_64-w64-mingw32-gcc CFLAGS="" LDFLAGS="-lm -static" make -C src pug
 
       # Step 4: Upload Windows binary as artifact
       - name: Upload Windows artifacts
