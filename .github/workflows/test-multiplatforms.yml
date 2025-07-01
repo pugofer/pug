@@ -36,15 +36,19 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements-test.txt
 
-      # Step 4: Build the pug interpreter
-      - name: Build pug interpreter
-        run: make -C src
+      # Step 4: Install libedit
+      - name: Install libedit-dev
+        run: sudo apt-get update && sudo apt-get install -y libedit-dev
 
-      # Step 5: Run the tests with XML reporting
+      # Step 5: Build the pug interpreter with readline support
+      - name: Build pug interpreter
+        run: make CFLAGS="-DUSE_READLINE=1" LDFLAGS="-ledit -lm" -C src
+
+      # Step 6: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
         run: make -C src test-reports
 
-      # Step 6: Upload test results to GitHub
+      # Step 7: Upload test results to GitHub
       - name: Publish Test Results
         uses: dorny/test-reporter@v1
         if: success() || failure()    # run this step even if tests fail
@@ -54,7 +58,7 @@ jobs:
           reporter: java-junit
           fail-on-error: false  # Changed to false to prevent workflow failure if reporting fails
 
-      # Step 7: Upload HTML reports as artifacts
+      # Step 8: Upload HTML reports as artifacts
       - name: Upload HTML Test Reports
         uses: actions/upload-artifact@v4
         if: always()  # Upload even if tests fail
@@ -82,9 +86,9 @@ jobs:
       - name: Install Python dependencies
         run: pip install -r requirements-test.txt
 
-      # Step 4: Build the pug interpreter
+      # Step 4: Build the pug interpreter with readline support
       - name: Build pug interpreter
-        run: make CFLAGS="-Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration -Wmain-return-type" -C src
+        run: make CFLAGS="-DUSE_READLINE=1 -Wno-deprecated-non-prototype -Wno-parentheses -Wimplicit-function-declaration -Wmain-return-type" LDFLAGS="-ledit -lm" -C src
 
       # Step 5: Run the tests with XML reporting
       - name: Run interpreter tests with XML reports
@@ -121,7 +125,7 @@ jobs:
 
       # Step 3: Cross-compile pug.exe for Windows
       - name: Cross-compile pug.exe for Windows
-        run: CC=x86_64-w64-mingw32-gcc LDFLAGS="-lm -static" make -C src pug
+        run: CC=x86_64-w64-mingw32-gcc CFLAGS="" LDFLAGS="-lm -static" make -C src pug
 
       # Step 4: Upload Windows binary as artifact
       - name: Upload Windows artifacts
