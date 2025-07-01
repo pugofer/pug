@@ -202,44 +202,47 @@ class TestPugInterpreter(unittest.TestCase):
         if not self.process:
             self.fail("Process not initialized")
 
-        # 1. Test History Navigation
-        self.process.sendline("1+1")
-        self.process.expect_exact("2")
-        self.process.expect(PUG_PROMPT)
+        try:
+            # 1. Test History Navigation
+            self.process.sendline("1+1")
+            self.process.expect_exact("2")
+            self.process.expect(PUG_PROMPT)
 
-        self.process.sendline("2+2")
-        self.process.expect_exact("4")
-        self.process.expect(PUG_PROMPT)
+            self.process.sendline("2+2")
+            self.process.expect_exact("4")
+            self.process.expect(PUG_PROMPT)
 
-        # Press UP to get "2+2", then UP again for "1+1"
-        self.process.send(UP_ARROW)
-        self.process.expect_exact("2+2")
+            # Press UP to get "2+2", then UP again for "1+1"
+            self.process.send(UP_ARROW)
+            self.process.expect_exact("2+2")
 
-        self.process.send(UP_ARROW)
-        self.process.expect_exact("1+1")
+            self.process.send(UP_ARROW)
+            self.process.expect_exact("1+1")
 
-        # Execute the recalled command
-        self.process.sendline("") # send enter
-        self.process.expect_exact("2")
-        self.process.expect(PUG_PROMPT)
+            # Execute the recalled command
+            self.process.sendline("") # send enter
+            self.process.expect_exact("2")
+            self.process.expect(PUG_PROMPT)
 
-        # 2. Test Cursor Movement and Editing
-        # Clear the line first (Ctrl+U)
-        self.process.send("\x15")
-        self.process.send("10+20")
-        self.process.expect_exact("10+20")
+            # 2. Test Cursor Movement and Editing
+            # Clear the line first (Ctrl+U)
+            self.process.send("\x15")  # \x15 is NAK (Negative Acknowledge), which clears the line (Ctrl+U).
+            self.process.send("10+20")
+            self.process.expect_exact("10+20")
 
-        # Move left, insert '3', move right, insert '4'
-        self.process.send(LEFT_ARROW) # Cursor is now between 2 and 0
-        self.process.send("3")         # Line becomes 10+230
-        self.process.send(RIGHT_ARROW) # Cursor is now at the end of the line
-        self.process.send("4")         # Line becomes 10+2304
+            # Move left, insert '3', move right, insert '4'
+            self.process.send(LEFT_ARROW) # Cursor is now between 2 and 0
+            self.process.send("3")         # Line becomes 10+230
+            self.process.send(RIGHT_ARROW) # Cursor is now at the end of the line
+            self.process.send("4")         # Line becomes 10+2304
 
-        # Now, execute the command "10+2304" by sending a newline
-        self.process.sendline("")
-        # The result of 10 + 2304 is 2314
-        self.process.expect_exact("2314")
-        self.process.expect(PUG_PROMPT)
+            # Now, execute the command "10+2304" by sending a newline
+            self.process.sendline("")
+            # The result of 10 + 2304 is 2314
+            self.process.expect_exact("2314")
+            self.process.expect(PUG_PROMPT)
+        except (pexpect.TIMEOUT, pexpect.EOF) as e:
+            self.fail(f"Readline test failed with exception: {e}")
 
 
 # --- Dynamic Test Generation Logic ---
