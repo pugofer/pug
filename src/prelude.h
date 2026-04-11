@@ -109,10 +109,10 @@
 #define LARGE_GOFER	(UNIX   | WATCOM | _WIN32)
 #define JMPBUF_ARRAY	(UNIX   | DJGPP | RISCOS | ZTC | ATARI)
 #define DOS_IO		(TURBOC | BCC | _WIN32 | DJGPP | ZTC | WATCOM | ATARI)
-#define TERMIO_IO	(LINUX  | HPUX | OS2 | SVR4 | SGI4)
+#define TERMIO_IO	(HPUX | OS2 | SVR4 | SGI4)
 #define SGTTY_IO	(SUNOS  | NEXTSTEP | NEXTGCC | AMIGA | MINIX68K | \
 			 ALPHA  | ULTRIX | AIX | MIPS)
-#define TERMIOS_IO      (NETBSD)
+#define TERMIOS_IO      (NETBSD | LINUX)
 #define BREAK_FLOATS	(TURBOC | BCC)
 #define HAS_FLOATS	(REGULAR_GOFER | LARGE_GOFER | BREAK_FLOATS)
 
@@ -306,11 +306,15 @@ typedef long     Long;
 typedef int      Char;
 typedef unsigned Unsigned;
 
+#ifndef LANGLEVELS
+#define LANGLEVELS         "../langlevels/"
+#endif
+
 #ifndef STD_PRELUDE
 #if     RISCOS
 #define STD_PRELUDE	   "prelude"
 #else
-#define STD_PRELUDE	   "../langlevels/pug.pre"
+#define STD_PRELUDE	   "pug.pre"
 #endif
 #endif
 

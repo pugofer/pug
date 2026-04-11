@@ -103,7 +103,7 @@ String argv[]; {
     scriptFile	  = 0;
     numScripts	  = 0;
     namesUpto	  = 1;
-    scriptName[0] = strCopy(fromEnv("PUG",STD_PRELUDE));
+    scriptName[0] = resolvePrelude(STD_PRELUDE);
     prompt	  = strCopy("?");
     repeatStr	  = strCopy("$$");
 

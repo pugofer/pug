@@ -36,6 +36,7 @@ static Void   local setLastEdit       Args((String,Int));
 static Void   local failed	      Args((Void));
 
 static String local strCopy	      Args((String));
+static String local resolvePrelude Args((String));
 static Int    local substr	      Args((String,String));
 
 /* --------------------------------------------------------------------------
@@ -111,6 +112,7 @@ static Void local optionInfo() {	/* Print information about command */
     printf("\nOTHER OPTIONS: (leading + or - makes no difference)\n");
     printf(fmts,"hnum","Set heap size (cannot be changed within Gofer)");
     printf(fmts,"pstr","Set prompt string to str");
+    printf(fmts,"Pstr","Set prelude script to str");
     printf(fmts,"rstr","Set repeat last expression string to str");
 #ifdef TECH_TOGGLES
     printf(fmts,"xnum","Set maximum depth for evidence search");
@@ -147,6 +149,12 @@ String s; {
 	    case 'p' : if (s[1]) {
 			   if (prompt) free(prompt);
 			   prompt = strCopy(s+1);
+		       }
+		       return;
+
+	    case 'P' : if (s[1]) {
+			   if (scriptName[0]) free(scriptName[0]);
+			   scriptName[0] = resolvePrelude(s+1);
 		       }
 		       return;
 
@@ -379,6 +387,27 @@ String s; {
 	return t;
     }
     return s;
+}
+
+static String local resolvePrelude(s)  /* Search for prelude script	   */
+String s; {
+    FILE *fp = fopen(s, "r");
+    if (fp) {
+	fclose(fp);
+	return strCopy(s);
+    }
+#ifdef LANGLEVELS
+    {
+	char buf[512];
+	sprintf(buf, "%s%s", LANGLEVELS, s);
+	fp = fopen(buf, "r");
+	if (fp) {
+	    fclose(fp);
+	    return strCopy(buf);
+	}
+    }
+#endif
+    return strCopy(s);
 }
 
 static Int local substr(s1,s2)		/* find posn of substring s1 in s2 */
