@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <mem.h>
 #include <time.h>
+#include <process.h>
 #endif
 
 #if (TURBOC | BCC)
@@ -455,6 +456,16 @@ int chdir(char *s) {			/* RISCOS PRM p. 885	-- JBS	   */
     return os_swi2(OS_FSControl + XOS_Bit, 0, (int)s) != NULL;
 }
 #endif
+
+Void replaceProcess(executable, args)
+String executable;
+char **args; {
+#if _WIN32
+    _execvp(executable, args);
+#else
+    execvp(executable, args);
+#endif
+}
 #endif
 
 /* --------------------------------------------------------------------------

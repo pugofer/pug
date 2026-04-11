@@ -16,6 +16,10 @@
 #include <setjmp.h>
 #include <ctype.h>
 
+#include <stdlib.h>
+
+static String goferExecutable = 0; // Captured in main() from argv[0]
+
 /* --------------------------------------------------------------------------
  * Machine dependent code for Gofer interpreter:
  * ------------------------------------------------------------------------*/
@@ -54,6 +58,7 @@ static Void   local info	      Args((Void));
 static Void   local describe	      Args((Text));
 static Void   local listNames	      Args((Void));
 static Void   local banner            Args((Void));
+static Void   local newprelude        Args((Void));
 
 /* --------------------------------------------------------------------------
  * Local data areas:
@@ -75,6 +80,7 @@ Main main(argc,argv)
 int  argc;
 char *argv[]; {
     CStackBase = &argc;                 /* Save stack base for use in gc   */
+    goferExecutable = argv[0];
 
     /* The startup banner now includes my name.  Gofer is provided free of */
     /* charge.  I ask however that you show your appreciation for the many */
@@ -138,6 +144,7 @@ static struct cmd cmds[] = {
  {":edit", EDIT},    {":find",   FIND},   {":names",   NAMES},
  {":set",  SET},     {":quit",   QUIT},   {":cd",      CHGDIR},
  {":!",    SYSTEM},  {":info",	 INFO},	  {":gc",      COLLECT},
+ {":langlevel", PRELUDE_CMD},
  {"",      EVAL},
  {0,0}
 };
@@ -152,6 +159,7 @@ static Void local menu() {
     printf(":project <filename> use project file\n");
     printf(":edit <filename>    edit file\n");
     printf(":edit               edit last file\n");
+    printf(":langlevel <filename> reload interpreter with new langlevel\n");
     printf("<expr>              evaluate expression\n");
     printf(":type <expr>        print type of expression\n");
     printf(":?                  display this list of commands\n");
@@ -655,6 +663,26 @@ static jmp_buf catch_error;	       /* jump buffer for error trapping   */
 #include "timer.c"
 #endif
 
+static Void local newprelude()
+{
+  String s = readFilename();
+  if (s) {
+    char *args[3];
+
+    char *arg1 = (char *)malloc(strlen("-l") + strlen(s) + 1);
+    sprintf(arg1, "-l%s", s);
+
+    args[0] = goferExecutable;
+    args[1] = arg1;
+    args[2] = NULL;
+
+    replaceProcess(goferExecutable, (char **)args);
+
+    ERROR(0) "OS failed to restart Gofer to load new langlevel \"%s\"", s
+    EEND;
+  }
+}
+
 static Void local interpreter(argc,argv)/* main interpreter loop	   */
 Int    argc;
 String argv[]; {
@@ -715,6 +743,8 @@ String argv[]; {
 	    case COLLECT: garbageCollect();
 			  printf("Garbage collection recovered %d cells\n",
 				 cellsRecovered);
+			  break;
+	    case PRELUDE_CMD: newprelude();
 			  break;
 	    case NOCMD	: break;
 	}
@@ -810,9 +840,9 @@ static Void local bannerContents()
   char *sep;
   char *banstrs[] =
   {
-       "Pug Version 0.3 Derived from Gofer Version 2.30a",
+       "Pug Version 0.4 Derived from Gofer Version 2.30a",
        "Modifications for pug Rusi Mody",
-       "Copyright (c) Rusi P Mody 1995-2025,  Mark P Jones 1991-1994.",
+       "Copyright (c) Rusi P Mody 1995-2026,  Mark P Jones 1991-1994.",
        NULL
   };
 

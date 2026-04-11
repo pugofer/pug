@@ -112,7 +112,7 @@ static Void local optionInfo() {	/* Print information about command */
     printf("\nOTHER OPTIONS: (leading + or - makes no difference)\n");
     printf(fmts,"hnum","Set heap size (cannot be changed within Gofer)");
     printf(fmts,"pstr","Set prompt string to str");
-    printf(fmts,"Pstr","Set prelude script to str");
+    printf(fmts,"lstr","Set prelude script to str");
     printf(fmts,"rstr","Set repeat last expression string to str");
 #ifdef TECH_TOGGLES
     printf(fmts,"xnum","Set maximum depth for evidence search");
@@ -152,7 +152,7 @@ String s; {
 		       }
 		       return;
 
-	    case 'P' : if (s[1]) {
+	    case 'l' : if (s[1]) {
 			   if (scriptName[0]) free(scriptName[0]);
 			   scriptName[0] = resolvePrelude(s+1);
 		       }

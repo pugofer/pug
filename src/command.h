@@ -32,6 +32,7 @@ extern Command readCommand Args((struct cmd *, Char, Char));
 #define CHGDIR  14
 #define INFO    15
 #define COLLECT 16
-#define NOCMD   17
+#define PRELUDE_CMD 17
+#define NOCMD   18
 
 /*-------------------------------------------------------------------------*/
