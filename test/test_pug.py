@@ -105,6 +105,9 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
         process: The pexpect process running the pug interpreter.
         filename: The path to the test data file.
     """
+    project_root = os.path.dirname(os.path.dirname(__file__))
+    filename = os.path.join(project_root, filename)
+
     if not os.path.exists(filename):
         test_case.fail(f"Test data file not found at {filename}")
     
@@ -133,7 +136,7 @@ def run_cmd_test_from_file(test_case: unittest.TestCase, process: Any, filename:
                                             f"Got: '{before_output}'")
 
                     # Ensure we see the next prompt before continuing
-                process.expect(PUG_PROMPT)
+                process.expect(PUG_PROMPT, timeout=2)
         else:
             test_case.fail(f"Test file format error in {filename}: Command '{command}' has no expected output.")
 
@@ -155,7 +158,7 @@ class TestPugInterpreter(unittest.TestCase):
         # Calculate absolute path to langlevels directory
         test_dir = os.path.dirname(os.path.abspath(__file__))
         project_root = os.path.dirname(test_dir)
-        langlevels_dir = os.path.join(project_root, 'langlevels')
+        # langlevels_dir = os.path.join(project_root, 'langlevels')
 
         # Handle platform-specific executable names
         if sys.platform == "win32":
@@ -173,14 +176,14 @@ class TestPugInterpreter(unittest.TestCase):
         langlevel = getattr(test_method, 'langlevel', 'pug')  # default to 'pug'
 
         # Set up environment with absolute path to langlevel file
-        langlevel_file = os.path.join(langlevels_dir, f'{langlevel}.pre')
+        # langlevel_file = os.path.join(langlevels_dir, f'{langlevel}.pre')
 
         # Verify the langlevel file exists
-        if not os.path.exists(langlevel_file):
-            self.fail(f"Language level file not found: {langlevel_file}")
+#        if not os.path.exists(langlevel_file):
+#            self.fail(f"Language level file not found: {langlevel_file}")
 
-        self.process = pexpect.spawn(pug_executable, args=[f'-P{langlevel_file}'], encoding='utf-8', cwd=src_dir)  # type: ignore
-        self.process.expect(PUG_PROMPT)  # type: ignore
+        self.process = pexpect.spawn(pug_executable, args=[f'-l{langlevel}.pre'], encoding='utf-8', cwd=src_dir)  # type: ignore
+        self.process.expect(PUG_PROMPT, timeout=2)  # type: ignore
 
     def tearDown(self):
         """Terminates the pug process after each test method."""
@@ -204,11 +207,11 @@ class TestPugInterpreter(unittest.TestCase):
         # 1. Test History Navigation
         self.process.sendline("1+1")
         self.process.expect_exact("2")
-        self.process.expect(PUG_PROMPT)
+        self.process.expect(PUG_PROMPT, timeout=2)
 
         self.process.sendline("2+2")
         self.process.expect_exact("4")
-        self.process.expect(PUG_PROMPT)
+        self.process.expect(PUG_PROMPT, timeout=2)
         
         # Press UP to get "2+2", then UP again for "1+1"
         self.process.send(UP_ARROW)
@@ -220,7 +223,7 @@ class TestPugInterpreter(unittest.TestCase):
         # Execute the recalled command
         self.process.sendline("") # send enter
         self.process.expect_exact("2")
-        self.process.expect(PUG_PROMPT)
+        self.process.expect(PUG_PROMPT, timeout=2)
 
         # 2. Test Cursor Movement and Editing
         # Clear the line first (Ctrl+U)
@@ -238,7 +241,7 @@ class TestPugInterpreter(unittest.TestCase):
         self.process.sendline("")
         # The result of 10 + 2304 is 2314
         self.process.expect_exact("2314")
-        self.process.expect(PUG_PROMPT)
+        self.process.expect(PUG_PROMPT, timeout=2)
 
 
 # --- Dynamic Test Generation Logic ---
